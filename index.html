@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EIVOMS - EARN Institute Inc.</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --primary-green-hover: #1B5E20;
+            --dark-gray: #263238;
+            --dark-gray-light: #37474F;
+            --gold: #FBC02D;
+            --gold-hover: #F9A825;
+            --light-bg: #F4F6F7;
+            --card-shadow: 0 4px 20px 0 rgba(0,0,0,0.05);
+            --transition-speed: 0.25s;
+            --sidebar-width: 260px;
+            --font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--light-bg);
+            color: var(--dark-gray);
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            background: linear-gradient(135deg, #1B5E20 0%, #263238 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1050;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            color: #FFFFFF;
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* --- Side Navigation Drawer --- */
+        #app-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--dark-gray);
+            color: #FFFFFF;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            z-index: 100;
+            transition: all var(--transition-speed) ease-in-out;
+            overflow-y: auto;
+            border-right: 4px solid var(--gold);
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 10px 18px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        #sidebar .nav-link:hover, #sidebar .nav-link.active {
+            color: #FFFFFF;
+            background-color: var(--dark-gray-light);
+            border-left-color: var(--gold);
+        }
+
+        #main-content {
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* --- UI Elements Styling --- */
+        .kpi-card {
+            border: none;
+            border-radius: 14px;
+            background: #FFFFFF;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .btn-earn-gold {
+            background-color: var(--gold);
+            color: var(--dark-gray);
+            font-weight: 700;
+            border: none;
+        }
+        .btn-earn-gold:hover {
+            background-color: var(--gold-hover);
+        }
+
+        #global-loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .dynamic-table th {
+            background-color: var(--dark-gray-light) !important;
+            color: #FFFFFF !important;
+        }
+
+        .editable-cell {
+            outline: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .editable-cell:focus {
+            background-color: rgba(251, 192, 45, 0.15) !important;
+            border: 1px solid var(--gold);
+        }
+
+        .gallery-card {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        .gallery-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle-btn {
+            display: none;
+        }
+
+        @media (max-width: 991.98px) {
+            #sidebar { left: -260px; }
+            #sidebar.show { left: 0; }
+            #main-content { margin-left: 0; }
+            .sidebar-toggle-btn { display: inline-block; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="global-loader">
+        <div class="text-center">
+            <div class="spinner-border text-success" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
+            <h5 class="mt-3 fw-bold text-success text-uppercase" id="loader-title">EIVOMS Engine booting...</h5>
+            <span class="text-muted small" id="loader-status">Configuring secure Firebase cloud database...</span>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        <div id="appToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">Notification logged.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <section id="login-screen">
+        <div class="glass-card p-4 p-md-5 text-center">
+            <div class="mb-4">
+                <div class="mx-auto bg-white rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 100px; height: 100px;">
+                    <i class="fa-solid fa-graduation-cap fa-3x text-success"></i>
+                </div>
+                <h3 class="mt-3 fw-extrabold text-white mb-0 text-uppercase">EARN Institute Inc.</h3>
+                <span class="text-warning small text-uppercase tracking-wider fw-bold">Enterprise Virtual Office Management System</span>
+            </div>
+
+            <form id="login-form">
+                <div class="form-floating mb-3 text-dark">
+                    <select class="form-select text-dark" id="login-email" required style="font-weight: 500;">
+                        </select>
+                    <label for="login-email" class="text-secondary fw-bold">Choose Your Job Title</label>
+                </div>
+                <div class="form-floating mb-3 text-dark position-relative">
+                    <input type="password" class="form-control" id="login-password" placeholder="Password" required autocomplete="current-password">
+                    <label for="login-password">Password</label>
+                    <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none me-2 text-secondary" id="btn-toggle-pwd">
+                        <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn btn-earn-gold w-100 py-3 text-uppercase rounded-pill shadow mb-3">
+                    Authorize Entry <i class="fa-solid fa-shield-halved ms-2"></i>
+                </button>
+                <button type="button" class="btn btn-link text-white-50 btn-sm text-decoration-none" data-bs-toggle="modal" data-bs-target="#titleListModal">
+                    <i class="fa-solid fa-circle-info me-1"></i> View Allowed System Titles
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <div class="modal fade" id="titleListModal" tabindex="-1" aria-labelledby="titleListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-dark">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="titleListModalLabel"><i class="fa-solid fa-user-shield text-warning me-2"></i>Authorized Logins (@earn.org)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="list-group list-group-flush" id="modal-allowed-titles-list">
+                        </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <span class="small text-muted w-100 text-center">Use password: <strong>earn@1993</strong> to access any system account.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-layout">
+        <nav id="sidebar">
+            <div class="p-3 text-center border-bottom border-secondary">
+                <i class="fa-solid fa-graduation-cap fa-2x text-warning mb-1"></i>
+                <h6 class="text-white mb-0 fw-bold" id="sidebar-user-title">EIVOMS Panel</h6>
+                <span class="text-warning small" id="sidebar-user-email">user@earn.org</span>
+            </div>
+            <div class="nav flex-column mt-2">
+                <a class="nav-link active" id="nav-dashboard"><i class="fa-solid fa-chart-line"></i> Interactive Dashboard</a>
+                <a class="nav-link" id="nav-hr"><i class="fa-solid fa-users-gear"></i> Human Resources</a>
+                <a class="nav-link" id="nav-programs"><i class="fa-solid fa-laptop-file"></i> Programs & M&E</a>
+                <a class="nav-link" id="nav-ledger"><i class="fa-solid fa-file-invoice-dollar"></i> Financial Ledger</a>
+                <a class="nav-link" id="nav-assets"><i class="fa-solid fa-boxes-stacked"></i> Inventory & Assets</a>
+                <a class="nav-link" id="nav-vault"><i class="fa-solid fa-vault"></i> Document Vault</a>
+                <a class="nav-link" id="nav-vehicles"><i class="fa-solid fa-car-side"></i> Fleet & Vehicles</a>
+                <a class="nav-link" id="nav-gallery"><i class="fa-solid fa-images"></i> Media Gallery</a>
+                <a class="nav-link" id="nav-contact"><i class="fa-solid fa-address-book"></i> Member Registration</a>
+                <a class="nav-link" id="nav-admin"><i class="fa-solid fa-gears"></i> Admin Core</a>
+                <hr class="text-secondary mx-3 my-2">
+                <a class="nav-link" id="nav-signout"><i class="fa-solid fa-right-from-bracket text-danger"></i> Sign Out</a>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap bg-white p-3 rounded shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-success sidebar-toggle-btn d-lg-none" id="btn-sidebar-toggle">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <span class="text-muted small">Local Node Clock</span>
+                        <h5 class="m-0 fw-bold text-success" id="live-timestamp">Synchronizing...</h5>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary position-relative dropdown-toggle" type="button" id="notificationMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell text-success"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end p-3 shadow" style="width: 320px;" id="notification-dropdown"></div>
+                </div>
+            </div>
+
+            <div id="dynamic-module-view"></div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FIREBASE AND SYSTEM CONFIGURATION SCRIPT -->
+    <script type="module">
+        // Import Firebase modules using production-ready CDN paths (v10)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // IMPORTANT: Replace these values with your actual web configuration settings from the Firebase Console!
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const sys = {
+            orgName: "EARN Institute Inc.",
+            buildVersion: "2.1.26-Security Patch"
+        };
+
+        const authorizedUsers = [
+            { id: "boardchair", rawTitle: "Board Chair", email: "boardchair@earn.org" },
+            { id: "director", rawTitle: "Director", email: "director@earn.org" },
+            { id: "executivedirector", rawTitle: "Executive Director", email: "executivedirector@earn.org" },
+            { id: "hrmanager", rawTitle: "HR Manager", email: "hrmanager@earn.org" },
+            { id: "procurementmanager", rawTitle: "Procurement Manager", email: "procurementmanager@earn.org" },
+            { id: "programmanager", rawTitle: "Program Manager", email: "programmanager@earn.org" },
+            { id: "memanager", rawTitle: "M&E Manager", email: "memanager@earn.org" },
+            { id: "communicationmanager", rawTitle: "Communication Manager", email: "communicationmanager@earn.org" },
+            { id: "itmanager", rawTitle: "IT Manager", email: "itmanager@earn.org" },
+            { id: "officer", rawTitle: "Officer", email: "officer@earn.org" },
+            { id: "assistant", rawTitle: "Assistant", email: "assistant@earn.org" }
+        ];
+
+        // System Data Stores (Now loaded directly from Cloud Firestore)
+        let dashboardStats = {};
+        let hrData = [];
+        let programsData = [];
+        let ledgerData = [];
+        let assetData = [];
+        let vaultData = [];
+        let vehicleData = [];
+        let galleryData = [];
+        let customMEColumns = [];
+
+        // Fallback structures if the Firestore cloud instance starts blank
+        const defaultDatabaseState = {
+            dashboardStats: { staffCount: 12, ledgerRecords: 24, activePrograms: 6, vaultDocs: 18 },
+            hrData: [
+                { id: "EMP-01", name: "Sarah Jenkins", role: "Dean of Studies", dept: "Academics", status: "Active" },
+                { id: "EMP-02", name: "Albert Cole", role: "Financial Controller", dept: "Finance", status: "Active" }
+            ],
+            programsData: [
+                { id: "PRG-201", title: "Global Public Health Framework", head: "Dr. Rachel Green", progress: "85%", kpi: "Improve clean water access", target: "95%" },
+                { id: "PRG-202", title: "Enterprise Systems Dev", head: "Davis", progress: "40%", kpi: "Acode platform testing cycles", target: "100%" }
+            ],
+            ledgerData: [
+                { ref: "TX-9041", desc: "Local Server Grid Renewal", type: "Expense", amount: "$1,240.00", status: "Approved" },
+                { ref: "TX-9042", desc: "Grant Allocation Tranche B", type: "Income", amount: "$18,500.00", status: "Completed" }
+            ],
+            assetData: [
+                { id: 101, name: "Lenovo ThinkPad Laptop", location: "Main Lab", status: "Allocated", owner: "Dept. Head" },
+                { id: 102, name: "Epson Projector H200", location: "Conference Hall A", status: "Available", owner: "Facility Admin" }
+            ],
+            vaultData: [
+                { docId: "DOC-90", name: "Institutional Policy Master", format: "PDF", size: "2.4 MB" },
+                { docId: "DOC-91", name: "Annual Financial Statement 2025", format: "XLSX", size: "14.1 MB" }
+            ],
+            vehicleData: [
+                { plate: "EARN-882", model: "Toyota Hiace Van", driver: "Driver John", status: "Active Transit" },
+                { plate: "EARN-104", model: "Mitsubishi L300", driver: "Driver Mark", status: "In Maintenance" }
+            ],
+            galleryData: [
+                { id: 1, name: "EARN Campus Building.jpg", type: "image", src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80" },
+                { id: 2, name: "Introductory Lecture.mp4", type: "video", src: "https://www.w3schools.com/html/mov_bbb.mp4" }
+            ],
+            customMEColumns: []
+        };
+
+        // --- FIRESTORE PERSISTENCE SYSTEM ---
+        const docRef = doc(db, "eivoms_data", "master_node");
+
+        async function syncWithFirestore() {
+            try {
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const cloudData = docSnap.data();
+                    dashboardStats = cloudData.dashboardStats || defaultDatabaseState.dashboardStats;
+                    hrData = cloudData.hrData || defaultDatabaseState.hrData;
+                    programsData = cloudData.programsData || defaultDatabaseState.programsData;
+                    ledgerData = cloudData.ledgerData || defaultDatabaseState.ledgerData;
+                    assetData = cloudData.assetData || defaultDatabaseState.assetData;
+                    vaultData = cloudData.vaultData || defaultDatabaseState.vaultData;
+                    vehicleData = cloudData.vehicleData || defaultDatabaseState.vehicleData;
+                    galleryData = cloudData.galleryData || defaultDatabaseState.galleryData;
+                    customMEColumns = cloudData.customMEColumns || defaultDatabaseState.customMEColumns;
+                } else {
+                    // Seed initial data if Firebase document is empty
+                    await setDoc(docRef, defaultDatabaseState);
+                    dashboardStats = defaultDatabaseState.dashboardStats;
+                    hrData = defaultDatabaseState.hrData;
+                    programsData = defaultDatabaseState.programsData;
+                    ledgerData = defaultDatabaseState.ledgerData;
+                    assetData = defaultDatabaseState.assetData;
+                    vaultData = defaultDatabaseState.vaultData;
+                    vehicleData = defaultDatabaseState.vehicleData;
+                    galleryData = defaultDatabaseState.galleryData;
+                    customMEColumns = defaultDatabaseState.customMEColumns;
+                }
+            } catch (error) {
+                console.error("Firestore Error during sync: ", error);
+                showToast("Offline mode: Reading fallbacks.");
+                dashboardStats = defaultDatabaseState.dashboardStats;
+                hrData = defaultDatabaseState.hrData;
+                programsData = defaultDatabaseState.programsData;
+                ledgerData = defaultDatabaseState.ledgerData;
+                assetData = defaultDatabaseState.assetData;
+                vaultData = defaultDatabaseState.vaultData;
+                vehicleData = defaultDatabaseState.vehicleData;
+                galleryData = defaultDatabaseState.galleryData;
+                customMEColumns = defaultDatabaseState.customMEColumns;
+            }
+        }
+
+        async function saveStateToCloud() {
+            try {
+                await setDoc(docRef, {
+                    dashboardStats,
+                    hrData,
+                    programsData,
+                    ledgerData,
+                    assetData,
+                    vaultData,
+                    vehicleData,
+                    galleryData,
+                    customMEColumns
+                }, { merge: true });
+                return true;
+            } catch (error) {
+                console.error("Failed writing variables to cloud: ", error);
+                showToast("Sync Error: Local change only.");
+                return false;
+            }
+        }
+
+        // --- UTILITIES ---
+        function toggleLoginPassword() {
+            const pw = document.getElementById('login-password');
+            const icon = document.getElementById('password-toggle-icon');
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                pw.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        function triggerLoader(duration = 600) {
+            const loader = document.getElementById('global-loader');
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => { loader.style.display = 'none'; }, 300);
+            }, duration);
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('sidebar').classList.remove('show');
+            document.querySelectorAll('#sidebar .nav-link').forEach(link => link.classList.remove('active'));
+            const activeLink = document.getElementById(`nav-${tabId}`);
+            if (activeLink) activeLink.classList.add('active');
+
+            switch (tabId) {
+                case 'dashboard': renderDashboard(); break;
+                case 'hr': renderHR(); break;
+                case 'programs': renderPrograms(); break;
+                case 'ledger': renderLedger(); break;
+                case 'assets': renderAssets(); break;
+                case 'vault': renderVault(); break;
+                case 'vehicles': renderVehicles(); break;
+                case 'gallery': renderGallery(); break;
+                case 'contact': renderContactForm(); break;
+                case 'admin': renderAdminPanel(); break;
+            }
+        }
+
+        // --- SESSION AND LOGIN CORE ---
+        const Session = {
+            login: function() {
+                const selectedEmail = document.getElementById("login-email").value;
+                const passwordInput = document.getElementById("login-password").value;
+
+                if (!selectedEmail) {
+                    alert("Please select a valid job title to log in.");
+                    return;
+                }
+
+                if (passwordInput !== "earn@1993") {
+                    alert("Authorization Refused: Incorrect Password.");
+                    return;
+                }
+
+                const matchingUser = authorizedUsers.find(user => user.email === selectedEmail);
+
+                if (!matchingUser) {
+                    alert("Access Denied: Selected title is not recognized.");
+                    return;
+                }
+
+                triggerLoader(800);
+                setTimeout(() => {
+                    localStorage.setItem("eivoms_session", "active");
+                    localStorage.setItem("eivoms_user_title", matchingUser.rawTitle);
+                    localStorage.setItem("eivoms_user_email", matchingUser.email);
+
+                    document.getElementById("sidebar-user-title").innerText = matchingUser.rawTitle;
+                    document.getElementById("sidebar-user-email").innerText = matchingUser.email;
+
+                    document.getElementById("login-screen").style.display = 'none';
+                    document.getElementById("app-layout").style.display = 'block';
+                    
+                    switchTab('dashboard');
+                    addSystemNotification("Security Engine", `Admin profile loaded: ${matchingUser.rawTitle}`);
+                }, 800);
+            },
+            logout: function() {
+                localStorage.removeItem("eivoms_session");
+                localStorage.removeItem("eivoms_user_title");
+                localStorage.removeItem("eivoms_user_email");
+                triggerLoader(400);
+                setTimeout(() => {
+                    document.getElementById("app-layout").style.display = 'none';
+                    document.getElementById("login-screen").style.display = 'flex';
+                    document.getElementById("login-password").value = "";
+                    document.getElementById("login-email").selectedIndex = 0;
+                }, 400);
+            },
+            checkAuth: function() {
+                if (localStorage.getItem("eivoms_session") === "active") {
+                    const savedTitle = localStorage.getItem("eivoms_user_title") || "Administrator";
+                    const savedEmail = localStorage.getItem("eivoms_user_email") || "user@earn.org";
+
+                    document.getElementById("sidebar-user-title").innerText = savedTitle;
+                    document.getElementById("sidebar-user-email").innerText = savedEmail;
+
+                    document.getElementById("login-screen").style.display = 'none';
+                    document.getElementById("app-layout").style.display = 'block';
+                    switchTab('dashboard');
+                }
+            }
+        };
+
+        function initializeLoginUI() {
+            const dropdown = document.getElementById("login-email");
+            const listContainer = document.getElementById("modal-allowed-titles-list");
+            
+            if (dropdown) {
+                dropdown.innerHTML = `
+                    <option value="" disabled selected>-- Click to Choose Your Title --</option>
+                    ${authorizedUsers.map(user => `
+                        <option value="${user.email}">${user.rawTitle} (${user.email})</option>
+                    `).join('')}
+                `;
+            }
+
+            if (listContainer) {
+                listContainer.innerHTML = authorizedUsers.map(user => `
+                    <div class="list-group-item d-flex justify-content-between align-items-center text-dark">
+                        <div>
+                            <h6 class="mb-0 fw-bold text-success">${user.rawTitle}</h6>
+                            <span class="text-muted small">${user.email}</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-dark" id="btn-copy-${user.id}">Copy ID</button>
+                    </div>
+                `).join('');
+
+                authorizedUsers.forEach(user => {
+                    document.getElementById(`btn-copy-${user.id}`).addEventListener("click", () => {
+                        copyLoginDetails(user.email);
+                    });
+                });
+            }
+        }
+
+        function copyLoginDetails(email) {
+            navigator.clipboard.writeText(email);
+            showToast(`Copied ${email} to clipboard!`);
+            const dropdown = document.getElementById("login-email");
+            if (dropdown) {
+                dropdown.value = email;
+            }
+        }
+
+        // --- 1. INTERACTIVE DASHBOARD COMPONENT ---
+        function renderDashboard() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-chart-pie me-2 text-success"></i>Interactive Operations Dashboard</h3>
+                            <p class="text-muted m-0">Click directly into any number values to modify them. Press the Gold Button to commit changes.</p>
+                        </div>
+                        <button class="btn btn-warning btn-sm font-weight-bold" id="btn-save-db"><i class="fa-solid fa-floppy-disk me-1"></i> Save Dashboard Edits</button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-primary">
+                            <i class="fa-solid fa-users-gear fa-2x text-primary mb-2"></i>
+                            <h6 class="text-muted small">Total Registered Staff</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-staff" contenteditable="true" style="font-size: 2rem;">${dashboardStats.staffCount}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0" id="btn-del-stat-staff"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-success">
+                            <i class="fa-solid fa-wallet fa-2x text-success mb-2"></i>
+                            <h6 class="text-muted small">Financial Ledgers Locked</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-ledger" contenteditable="true" style="font-size: 2rem;">${dashboardStats.ledgerRecords}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0" id="btn-del-stat-ledger"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-warning">
+                            <i class="fa-solid fa-laptop-file fa-2x text-warning mb-2"></i>
+                            <h6 class="text-muted small">Active Project Portfolios</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-programs" contenteditable="true" style="font-size: 2rem;">${dashboardStats.activePrograms}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0" id="btn-del-stat-programs"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-danger">
+                            <i class="fa-solid fa-vault fa-2x text-danger mb-2"></i>
+                            <h6 class="text-muted small">Archived Vault Docs</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-vault" contenteditable="true" style="font-size: 2rem;">${dashboardStats.vaultDocs}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0" id="btn-del-stat-vault"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm p-4 bg-white">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-bolt text-warning me-2"></i>Quick Administrative Access</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-outline-success btn-sm" id="btn-quick-hr">View Full HR Directory</button>
+                                <button class="btn btn-outline-warning btn-sm" id="btn-quick-prog">Open Monitoring and Evaluation</button>
+                                <button class="btn btn-outline-dark btn-sm" id="btn-quick-gal">Media Files Repository</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Bind UI interactive events
+            document.getElementById("btn-save-db").addEventListener("click", saveDashboardStats);
+            document.getElementById("btn-del-stat-staff").addEventListener("click", () => deleteStat('staffCount'));
+            document.getElementById("btn-del-stat-ledger").addEventListener("click", () => deleteStat('ledgerRecords'));
+            document.getElementById("btn-del-stat-programs").addEventListener("click", () => deleteStat('activePrograms'));
+            document.getElementById("btn-del-stat-vault").addEventListener("click", () => deleteStat('vaultDocs'));
+            
+            document.getElementById("btn-quick-hr").addEventListener("click", () => switchTab('hr'));
+            document.getElementById("btn-quick-prog").addEventListener("click", () => switchTab('programs'));
+            document.getElementById("btn-quick-gal").addEventListener("click", () => switchTab('gallery'));
+        }
+
+        async function saveDashboardStats() {
+            dashboardStats.staffCount = parseInt(document.getElementById("db-staff").innerText) || 0;
+            dashboardStats.ledgerRecords = parseInt(document.getElementById("db-ledger").innerText) || 0;
+            dashboardStats.activePrograms = parseInt(document.getElementById("db-programs").innerText) || 0;
+            dashboardStats.vaultDocs = parseInt(document.getElementById("db-vault").innerText) || 0;
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Operational statistics saved to Firebase Cloud!");
+                addSystemNotification("System Dashboard", "Interactive dashboard KPI cards committed.");
+            }
+        }
+
+        async function deleteStat(key) {
+            dashboardStats[key] = 0;
+            await saveStateToCloud();
+            renderDashboard();
+            showToast(`KPI Metric cleared successfully.`);
+        }
+
+        // --- 2. HUMAN RESOURCES ---
+        function renderHR() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-users-gear me-2 text-success"></i>Staff & Human Resource Directories</h3>
+                        <p class="text-muted m-0">In-line editable values. Hit Save to store modifications.</p>
+                    </div>
+                    <button class="btn btn-success btn-sm" id="btn-add-staff"><i class="fa-solid fa-plus me-1"></i> Enroll Employee</button>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-4 mb-4">
+                    <h5 class="fw-bold text-success mb-2"><i class="fa-solid fa-address-card me-2"></i>EIVOMS Security Node Access Registry</h5>
+                    <p class="text-muted small">Registered Title-based profiles validated under <strong>earn.org</strong> secure configurations.</p>
+                    <div class="row g-2 mt-2">
+                        ${authorizedUsers.map(user => `
+                            <div class="col-12 col-sm-6 col-md-4">
+                                <div class="p-2 border rounded bg-light d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-bold small text-dark">${user.rawTitle}</div>
+                                        <div class="text-muted small" style="font-size: 11px;">${user.email}</div>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success small">Registered</span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>ID Card</th>
+                                    <th>Employee Name</th>
+                                    <th>Assigned Role</th>
+                                    <th>Office Section</th>
+                                    <th>Operating Status</th>
+                                    <th>Management Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${hrData.map((emp, index) => `
+                                    <tr>
+                                        <td><strong>${emp.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-name-${index}">${emp.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-role-${index}">${emp.role}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-dept-${index}">${emp.dept}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-status-${index}">${emp.status}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-success me-1" id="btn-hr-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                            <button class="btn btn-sm btn-outline-danger" id="btn-hr-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-add-staff").addEventListener("click", addNewStaff);
+            hrData.forEach((emp, index) => {
+                document.getElementById(`btn-hr-save-${index}`).addEventListener("click", () => saveHRRow(index));
+                document.getElementById(`btn-hr-del-${index}`).addEventListener("click", () => deleteHRRow(index));
+            });
+        }
+
+        async function addNewStaff() {
+            const num = hrData.length + 1;
+            hrData.push({ id: `EMP-0${num}`, name: "New Associate", role: "Unassigned", dept: "Unassigned", status: "Active" });
+            await saveStateToCloud();
+            renderHR();
+            showToast("New Employee record created.");
+        }
+
+        async function saveHRRow(index) {
+            hrData[index].name = document.getElementById(`hr-name-${index}`).innerText.trim();
+            hrData[index].role = document.getElementById(`hr-role-${index}`).innerText.trim();
+            hrData[index].dept = document.getElementById(`hr-dept-${index}`).innerText.trim();
+            hrData[index].status = document.getElementById(`hr-status-${index}`).innerText.trim();
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Employee row updated and stored in Firebase.");
+            }
+        }
+
+        async function deleteHRRow(index) {
+            if(confirm("Are you sure you want to delete this staff record?")) {
+                hrData.splice(index, 1);
+                await saveStateToCloud();
+                renderHR();
+                showToast("Staff record deleted successfully.");
+            }
+        }
+
+        // --- 3. PROGRAMS & INTEGRATED MONITORING & EVALUATION ---
+        function renderPrograms() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file me-2 text-success"></i>Integrated Programs & M&E Framework</h3>
+                            <p class="text-muted m-0">Directly link projects to strategic Monitoring & Evaluation key performance indicators (KPIs).</p>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button class="btn btn-success btn-sm" id="btn-add-prog"><i class="fa-solid fa-plus me-1"></i> Add Project Row</button>
+                        <button class="btn btn-success btn-sm fw-bold border-2 border-dark" style="color: #ffffff; background-color: #1B5E20;" id="btn-add-me-col"><i class="fa-solid fa-circle-plus me-1"></i> ADD M&E COLUMN (GREEN)</button>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table" id="me-dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref ID</th>
+                                    <th>Program / Project Title</th>
+                                    <th>Director</th>
+                                    <th>Completion</th>
+                                    <th>Key Performance Indicator (KPI)</th>
+                                    <th>Metric Target</th>
+                                    ${customMEColumns.map((col, cIdx) => `
+                                        <th>${col} <button class="btn btn-link text-white p-0 btn-xs" id="btn-col-del-${cIdx}"><i class="fa-solid fa-xmark"></i></button></th>
+                                    `).join('')}
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${programsData.map((p, index) => `
+                                    <tr>
+                                        <td><strong>${p.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-title-${index}">${p.title}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-head-${index}">${p.head}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-progress-${index}">${p.progress}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-kpi-${index}">${p.kpi}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-target-${index}">${p.target}</td>
+                                        ${customMEColumns.map((col, cIdx) => `
+                                            <td contenteditable="true" class="editable-cell" id="prog-custom-${index}-${cIdx}">${p['custom_' + cIdx] || 'No Data'}</td>
+                                        `).join('')}
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" id="btn-prog-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" id="btn-prog-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-add-prog").addEventListener("click", addNewProgram);
+            document.getElementById("btn-add-me-col").addEventListener("click", addNewMEColumn);
+            
+            customMEColumns.forEach((col, cIdx) => {
+                document.getElementById(`btn-col-del-${cIdx}`).addEventListener("click", () => deleteMEColumn(cIdx));
+            });
+
+            programsData.forEach((p, index) => {
+                document.getElementById(`btn-prog-save-${index}`).addEventListener("click", () => saveProgramRow(index));
+                document.getElementById(`btn-prog-del-${index}`).addEventListener("click", () => deleteProgramRow(index));
+            });
+        }
+
+        async function addNewProgram() {
+            programsData.push({ 
+                id: `PRG-${Math.floor(200+Math.random()*100)}`, 
+                title: "New Initiative Project", 
+                head: "Officer Assg.", 
+                progress: "0%",
+                kpi: "System indicator",
+                target: "100%"
+            });
+            await saveStateToCloud();
+            renderPrograms();
+            showToast("Integrated Program evaluation row added.");
+        }
+
+        async function saveProgramRow(index) {
+            programsData[index].title = document.getElementById(`prog-title-${index}`).innerText.trim();
+            programsData[index].head = document.getElementById(`prog-head-${index}`).innerText.trim();
+            programsData[index].progress = document.getElementById(`prog-progress-${index}`).innerText.trim();
+            programsData[index].kpi = document.getElementById(`prog-kpi-${index}`).innerText.trim();
+            programsData[index].target = document.getElementById(`prog-target-${index}`).innerText.trim();
+            
+            customMEColumns.forEach((col, cIdx) => {
+                const customCell = document.getElementById(`prog-custom-${index}-${cIdx}`);
+                if(customCell) {
+                    programsData[index]['custom_' + cIdx] = customCell.innerText.trim();
+                }
+            });
+
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Program matrix saved successfully to Firebase.");
+                addSystemNotification("Programs & M&E", `Updated metrics on Program: ${programsData[index].id}`);
+            }
+        }
+
+        async function deleteProgramRow(index) {
+            if(confirm("Purge program registry row from database?")) {
+                programsData.splice(index, 1);
+                await saveStateToCloud();
+                renderPrograms();
+                showToast("Evaluation program row deleted.");
+            }
+        }
+
+        async function addNewMEColumn() {
+            const colName = prompt("Input column name for Performance Index tracking:");
+            if (colName) {
+                customMEColumns.push(colName);
+                await saveStateToCloud();
+                renderPrograms();
+                showToast(`Metric tracking column "${colName}" initialized.`);
+            }
+        }
+
+        async function deleteMEColumn(cIdx) {
+            if(confirm("Remove this indicator column from evaluation metrics?")) {
+                customMEColumns.splice(cIdx, 1);
+                programsData.forEach(p => delete p['custom_' + cIdx]);
+                await saveStateToCloud();
+                renderPrograms();
+                showToast("Indicator column removed.");
+            }
+        }
+
+        // --- 4. FINANCIAL LEDGER ---
+        function renderLedger() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar me-2 text-success"></i>Financial Ledger Records</h3>
+                        <p class="text-muted m-0">Edit cells directly, hit actions buttons to record and save.</p>
+                    </div>
+                    <button class="btn btn-success btn-sm" id="btn-add-ledger"><i class="fa-solid fa-plus me-1"></i> Add New Record</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction Ref</th>
+                                    <th>Details / Particulars</th>
+                                    <th>Transaction Type</th>
+                                    <th>Settle Value</th>
+                                    <th>Verification State</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${ledgerData.map((item, index) => `
+                                    <tr>
+                                        <td><strong>${item.ref}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="led-desc-${index}">${item.desc}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-type-${index}">${item.type}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-amount-${index}">${item.amount}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-status-${index}">${item.status}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" id="btn-ledger-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" id="btn-ledger-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-add-ledger").addEventListener("click", addNewLedger);
+            ledgerData.forEach((item, index) => {
+                document.getElementById(`btn-ledger-save-${index}`).addEventListener("click", () => saveLedgerRow(index));
+                document.getElementById(`btn-ledger-del-${index}`).addEventListener("click", () => deleteLedgerRow(index));
+            });
+        }
+
+        async function addNewLedger() {
+            ledgerData.push({ ref: `TX-${Math.floor(9000+Math.random()*900)}`, desc: "System Operation Log", type: "Expense", amount: "$0.00", status: "Pending" });
+            await saveStateToCloud();
+            renderLedger();
+            showToast("Financial record initialized.");
+        }
+
+        async function saveLedgerRow(index) {
+            ledgerData[index].desc = document.getElementById(`led-desc-${index}`).innerText.trim();
+            ledgerData[index].type = document.getElementById(`led-type-${index}`).innerText.trim();
+            ledgerData[index].amount = document.getElementById(`led-amount-${index}`).innerText.trim();
+            ledgerData[index].status = document.getElementById(`led-status-${index}`).innerText.trim();
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Transaction record saved securely to Firebase.");
+            }
+        }
+
+        async function deleteLedgerRow(index) {
+            if(confirm("Purge ledger line item?")) {
+                ledgerData.splice(index, 1);
+                await saveStateToCloud();
+                renderLedger();
+                showToast("Ledger statement deleted.");
+            }
+        }
+
+        // --- 5. INVENTORY & ASSET MANAGEMENT ---
+        function renderAssets() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked me-2 text-success"></i>Inventory and Asset Management</h3>
+                        <p class="text-muted m-0">Edit inventory stocks, assign holders, and record assets directly.</p>
+                    </div>
+                    <button class="btn btn-success btn-sm" id="btn-add-asset"><i class="fa-solid fa-plus me-1"></i> Record & Add Asset</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Asset ID</th>
+                                    <th>Asset / Stock Name</th>
+                                    <th>Storage Location</th>
+                                    <th>Circulation Status</th>
+                                    <th>Primary Holder</th>
+                                    <th>Control Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${assetData.map((item, index) => `
+                                    <tr>
+                                        <td><strong>#${item.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-name-${index}">${item.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-loc-${index}">${item.location}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-status-${index}">${item.status}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-owner-${index}">${item.owner}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" title="Save Asset" id="btn-asset-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Delete Asset" id="btn-asset-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-add-asset").addEventListener("click", addNewAsset);
+            assetData.forEach((item, index) => {
+                document.getElementById(`btn-asset-save-${index}`).addEventListener("click", () => saveAssetRow(index));
+                document.getElementById(`btn-asset-del-${index}`).addEventListener("click", () => deleteAssetRow(index));
+            });
+        }
+
+        async function addNewAsset() {
+            const nextId = assetData.length > 0 ? Math.max(...assetData.map(a=>a.id)) + 1 : 101;
+            assetData.push({ id: nextId, name: "New Equipment Stock", location: "Warehouse Storage", status: "Available", owner: "Supply Desk" });
+            await saveStateToCloud();
+            renderAssets();
+            showToast("New asset stock item recorded.");
+        }
+
+        async function saveAssetRow(index) {
+            assetData[index].name = document.getElementById(`ast-name-${index}`).innerText.trim();
+            assetData[index].location = document.getElementById(`ast-loc-${index}`).innerText.trim();
+            assetData[index].status = document.getElementById(`ast-status-${index}`).innerText.trim();
+            assetData[index].owner = document.getElementById(`ast-owner-${index}`).innerText.trim();
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Asset stock record updated in Firebase.");
+            }
+        }
+
+        async function deleteAssetRow(index) {
+            if(confirm("Remove this item from the active asset stock registry?")) {
+                assetData.splice(index, 1);
+                await saveStateToCloud();
+                renderAssets();
+                showToast("Asset deleted.");
+            }
+        }
+
+        // --- 6. DOCUMENT VAULT ---
+        function renderVault() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault me-2 text-success"></i>Internal Document Vault</h3>
+                            <p class="text-muted m-0">Store and modify indexes of files in any format (PDF, PNG, DOCX, XLSX, etc.).</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="btn btn-success btn-sm mb-0">
+                            <i class="fa-solid fa-file-arrow-up me-1"></i> Register & Upload Document
+                            <input type="file" id="vault-file-uploader" style="display:none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Document Key</th>
+                                    <th>Filename Identifier</th>
+                                    <th>Document Format</th>
+                                    <th>Storage Allocation</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${vaultData.map((doc, index) => `
+                                    <tr>
+                                        <td><strong>${doc.docId}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-name-${index}">${doc.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-format-${index}">${doc.format}</td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-size-${index}">${doc.size}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" title="Save Edits" id="btn-vault-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Purge Record" id="btn-vault-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("vault-file-uploader").addEventListener("change", function() {
+                uploadDocumentToVault(this);
+            });
+            
+            vaultData.forEach((doc, index) => {
+                document.getElementById(`btn-vault-save-${index}`).addEventListener("click", () => saveVaultRow(index));
+                document.getElementById(`btn-vault-del-${index}`).addEventListener("click", () => deleteVaultRow(index));
+            });
+        }
+
+        async function uploadDocumentToVault(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const format = file.name.split('.').pop().toUpperCase();
+                const size = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+                
+                vaultData.push({
+                    docId: `DOC-${Math.floor(100+Math.random()*900)}`,
+                    name: file.name.substring(0, file.name.lastIndexOf('.')),
+                    format: format,
+                    size: size
+                });
+                await saveStateToCloud();
+                renderVault();
+                showToast("Document indexed securely in the Cloud Vault.");
+            }
+        }
+
+        async function saveVaultRow(index) {
+            vaultData[index].name = document.getElementById(`vlt-name-${index}`).innerText.trim();
+            vaultData[index].format = document.getElementById(`vlt-format-${index}`).innerText.trim();
+            vaultData[index].size = document.getElementById(`vlt-size-${index}`).innerText.trim();
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Document descriptor edits stored in Firebase.");
+            }
+        }
+
+        async function deleteVaultRow(index) {
+            if(confirm("Are you sure you want to delete this document from the vault records?")) {
+                vaultData.splice(index, 1);
+                await saveStateToCloud();
+                renderVault();
+                showToast("Document registry index deleted.");
+            }
+        }
+
+        // --- 7. FLEET & VEHICLE SHEETS ---
+        function renderVehicles() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-warning d-flex flex-wrap align-items-center justify-content-between">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side me-2 text-warning"></i>Active Fleet & Vehicle Registry</h3>
+                        <p class="text-muted m-0">Monitor transport configurations, assign drivers, and manage telemetry.</p>
+                    </div>
+                    <button class="btn btn-warning btn-sm" id="btn-add-vehicle"><i class="fa-solid fa-plus me-1"></i> Register Vehicle</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Plate Identification</th>
+                                    <th>Vehicle Model</th>
+                                    <th>Assigned Operator</th>
+                                    <th>Deployment Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${vehicleData.map((v, index) => `
+                                    <tr>
+                                        <td><strong>${v.plate}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-model-${index}">${v.model}</td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-driver-${index}">${v.driver}</td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-status-${index}">${v.status}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" title="Save Telemetry" id="btn-vehicle-save-${index}"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" title="Remove Vehicle" id="btn-vehicle-del-${index}"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-add-vehicle").addEventListener("click", addNewVehicle);
+            vehicleData.forEach((v, index) => {
+                document.getElementById(`btn-vehicle-save-${index}`).addEventListener("click", () => saveVehicleRow(index));
+                document.getElementById(`btn-vehicle-del-${index}`).addEventListener("click", () => deleteVehicleRow(index));
+            });
+        }
+
+        async function addNewVehicle() {
+            vehicleData.push({ plate: "EARN-" + Math.floor(100 + Math.random() * 900), model: "Sedan Chassis", driver: "Awaiting Assignment", status: "Idle" });
+            await saveStateToCloud();
+            renderVehicles();
+            showToast("New vehicle registered to fleet.");
+        }
+
+        async function saveVehicleRow(index) {
+            vehicleData[index].model = document.getElementById(`veh-model-${index}`).innerText.trim();
+            vehicleData[index].driver = document.getElementById(`veh-driver-${index}`).innerText.trim();
+            vehicleData[index].status = document.getElementById(`veh-status-${index}`).innerText.trim();
+            
+            const success = await saveStateToCloud();
+            if (success) {
+                showToast("Vehicle telemetry updated in Firebase.");
+            }
+        }
+
+        async function deleteVehicleRow(index) {
+            if(confirm("Remove this vehicle from deployment records?")) {
+                vehicleData.splice(index, 1);
+                await saveStateToCloud();
+                renderVehicles();
+                showToast("Vehicle record purged.");
+            }
+        }
+
+        // --- 8. MEDIA GALLERY ---
+        function renderGallery() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-images me-2 text-success"></i>Core Media & Attachments Gallery</h3>
+                            <p class="text-muted m-0">Upload and catalog programmatic media, photographs, and video clips.</p>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="btn btn-success btn-sm mb-0">
+                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Media Asset
+                            <input type="file" id="gallery-file-uploader" accept="image/*,video/*" style="display:none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="gallery-container">
+                    ${galleryData.map((media, index) => `
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="card gallery-card bg-white border-0 h-100 d-flex flex-column justify-content-between">
+                                <div class="gallery-preview">
+                                    ${media.type === 'image' 
+                                        ? `<img src="${media.src}" alt="${media.name}" class="w-100 h-100" style="object-fit:cover;">` 
+                                        : `<video src="${media.src}" controls class="w-100 h-100" style="object-fit:cover;"></video>`
+                                    }
+                                </div>
+                                <div class="p-3">
+                                    <h6 class="text-truncate fw-bold mb-1" title="${media.name}">${media.name}</h6>
+                                    <span class="badge bg-secondary mb-3">${media.type.toUpperCase()}</span>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <button class="btn btn-xs btn-outline-danger w-100" id="btn-media-del-${index}"><i class="fa-solid fa-trash-can me-1"></i> Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("gallery-file-uploader").addEventListener("change", function() {
+                uploadMediaAsset(this);
+            });
+            
+            galleryData.forEach((media, index) => {
+                document.getElementById(`btn-media-del-${index}`).addEventListener("click", () => deleteMedia(index));
+            });
+        }
+
+        async function uploadMediaAsset(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const type = file.type.startsWith('video') ? 'video' : 'image';
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    galleryData.push({
+                        id: Date.now(),
+                        name: file.name,
+                        type: type,
+                        src: e.target.result // Saved as base64 in Firestore Document
+                    });
+                    await saveStateToCloud();
+                    renderGallery();
+                    showToast("Media resource compiled and rendered on Cloud.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function deleteMedia(index) {
+            if(confirm("Delete this attachment from the gallery memory?")) {
+                galleryData.splice(index, 1);
+                await saveStateToCloud();
+                renderGallery();
+                showToast("Media file deleted.");
+            }
+        }
+
+        // --- 9. MEMBER REGISTRATION / CONTACT FORM ---
+        function renderContactForm() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book me-2 text-success"></i>Internal Member Registration</h3>
+                    <p class="text-muted m-0">Enroll dynamic delegates and administrators directly to EARN systems.</p>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-4 mx-auto" style="max-width: 650px;">
+                    <form id="eivoms-contact-form">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">First Name</label>
+                                <input type="text" class="form-control" id="form-first-name" placeholder="John" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">Last Name</label>
+                                <input type="text" class="form-control" id="form-last-name" placeholder="Doe" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Email Address</label>
+                            <input type="email" class="form-control" id="form-email" placeholder="johndoe@example.com" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Contact Number</label>
+                            <input type="tel" class="form-control" id="form-phone" placeholder="+1 (555) 000-0000" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Primary Address</label>
+                            <textarea class="form-control" id="form-address" rows="3" placeholder="123 Academic Way" required></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">Gender</label>
+                            <select class="form-select" id="form-gender" required>
+                                <option value="" disabled selected>Identify Gender Profile</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-Binary">Non-Binary</option>
+                                <option value="Prefer Not To Say">Prefer Not To Say</option>
+                            </select>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-bolder border-2" style="font-weight: 800; color: #1B5E20; font-size: 1.1rem; text-transform: uppercase; border-color: #1B5E20; background: #ffffff;">
+                                Submit Registration File <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("eivoms-contact-form").addEventListener("submit", submitContactForm);
+        }
+
+        async function submitContactForm(event) {
+            event.preventDefault();
+            const first = document.getElementById("form-first-name").value;
+            const last = document.getElementById("form-last-name").value;
+            
+            addSystemNotification("Member Directory", `Registered delegate: ${first} ${last}`);
+            showToast(`Form received! Welcome, ${first}.`);
+            document.getElementById("eivoms-contact-form").reset();
+        }
+
+        // --- 10. SYSTEM ADMINISTRATION PANEL ---
+        function renderAdminPanel() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-gears me-2 text-success"></i>System Administration Core</h3>
+                        <p class="text-muted m-0">Database pruning tools, backup creation, and systemic environment controls.</p>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-database text-success me-2"></i>Database Backups & Maintenance</h5>
+                            <p class="text-muted small">EIVOMS runs on a decentralized Firestore cloud backend. Download backups locally to preserve secure, offline snapshots instantly.</p>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button class="btn btn-outline-success" id="btn-backup"><i class="fa-solid fa-file-export me-1"></i> Download JSON Backup</button>
+                                <button class="btn btn-danger" id="btn-reset-db"><i class="fa-solid fa-trash-arrow-up me-1"></i> Reset Cloud Data</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-sliders text-warning me-2"></i>Environment Profiles</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Authorized Institution</label>
+                                <input type="text" class="form-control" value="${sys.orgName}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">System Architecture Version</label>
+                                <span class="badge bg-secondary d-block text-start p-2">${sys.buildVersion}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Bind Elements
+            document.getElementById("btn-backup").addEventListener("click", triggerDatabaseBackup);
+            document.getElementById("btn-reset-db").addEventListener("click", resetSystem);
+        }
+
+        function triggerDatabaseBackup() {
+            const packageData = {
+                header: "EIVOMS Master Log Backup",
+                institution: sys.orgName,
+                compiler: sys.buildVersion,
+                dashboard: dashboardStats,
+                hr: hrData,
+                programs: programsData,
+                ledger: ledgerData,
+                assets: assetData,
+                vault: vaultData,
+                vehicles: vehicleData,
+                timestamp: new Date().toISOString()
+            };
+            
+            const fileString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData, null, 4));
+            const downloader = document.createElement('a');
+            downloader.setAttribute("href", fileString);
+            downloader.setAttribute("download", `EIVOMS_Unified_Backup_${Date.now()}.json`);
+            document.body.appendChild(downloader);
+            downloader.click();
+            downloader.remove();
+            showToast("Database backup package compiled.");
+        }
+
+        async function resetSystem() {
+            if(confirm("DANGER: Wiping cloud database configurations will permanently reset your production Firestore node. Proceed?")) {
+                try { 
+                    await setDoc(docRef, defaultDatabaseState);
+                    showToast("Cloud configuration successfully restored to seed defaults!");
+                    setTimeout(() => { window.location.reload(); }, 1000);
+                } catch(e) {
+                    showToast("Error executing full systemic cloud reset.");
+                }
+            }
+        }
+
+        // --- GLOBAL NOTIFICATIONS PANEL ---
+        const systemNotifications = [
+            { system: "System Core", details: "EIVOMS engine booting complete.", time: "Just Now" }
+        ];
+
+        function addSystemNotification(system, details) {
+            systemNotifications.unshift({ system, details, time: "Just Now" });
+            updateNotificationUI();
+        }
+
+        function updateNotificationUI() {
+            const listEl = document.getElementById("notification-dropdown");
+            const badgeEl = document.getElementById("notification-count");
+            if (!badgeEl || !listEl) return;
+            badgeEl.innerText = systemNotifications.length;
+            listEl.innerHTML = `
+                <h6 class="fw-bold border-bottom pb-2 text-dark">Recent Core Notifications</h6>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    ${systemNotifications.map(n => `
+                        <div class="p-2 border-bottom hover-bg-light rounded small mb-1 text-dark">
+                            <div class="d-flex justify-content-between">
+                                <strong class="text-success">${n.system}</strong>
+                                <span class="text-xs text-muted" style="font-size: 10px;">${n.time}</span>
+                            </div>
+                            <p class="text-muted m-0" style="font-size: 11px;">${n.details}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function runTimestampService() {
+            setInterval(() => {
+                const clockEl = document.getElementById("live-timestamp");
+                if (clockEl) { clockEl.innerText = new Date().toLocaleString(); }
+            }, 1000);
+        }
+
+        function showToast(msg) {
+            const toastEl = document.getElementById('appToast');
+            document.getElementById('toast-message').textContent = msg;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        // --- ATTACH LISTENERS ---
+        document.getElementById("login-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            Session.login();
+        });
+
+        document.getElementById("nav-signout").addEventListener("click", () => {
+            if (confirm("Close securely logged session and return to master authorization gateway?")) {
+                Session.logout();
+            }
+        });
+
+        document.getElementById("btn-toggle-pwd").addEventListener("click", toggleLoginPassword);
+        document.getElementById("btn-sidebar-toggle").addEventListener("click", toggleMobileSidebar);
+
+        // Sidebar Navigation links
+        document.getElementById("nav-dashboard").addEventListener("click", () => switchTab('dashboard'));
+        document.getElementById("nav-hr").addEventListener("click", () => switchTab('hr'));
+        document.getElementById("nav-programs").addEventListener("click", () => switchTab('programs'));
+        document.getElementById("nav-ledger").addEventListener("click", () => switchTab('ledger'));
+        document.getElementById("nav-assets").addEventListener("click", () => switchTab('assets'));
+        document.getElementById("nav-vault").addEventListener("click", () => switchTab('vault'));
+        document.getElementById("nav-vehicles").addEventListener("click", () => switchTab('vehicles'));
+        document.getElementById("nav-gallery").addEventListener("click", () => switchTab('gallery'));
+        document.getElementById("nav-contact").addEventListener("click", () => switchTab('contact'));
+        document.getElementById("nav-admin").addEventListener("click", () => switchTab('admin'));
+
+        // Bootstrapping operations
+        window.addEventListener("DOMContentLoaded", async () => {
+            runTimestampService();
+            updateNotificationUI();
+            initializeLoginUI(); 
+            
+            // Query state straight from Firebase Firestore database
+            await syncWithFirestore();
+
+            Session.checkAuth();
+            triggerLoader(600);
+        });
+    </script>
+</body>
+</html>
