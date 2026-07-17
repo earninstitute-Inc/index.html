@@ -238,7 +238,6 @@
             touch-action: manipulation;
         }
 
-        /* Custom styling for printable reports view */
         .report-section {
             border: 1px solid #dee2e6;
             background-color: #ffffff;
@@ -340,6 +339,7 @@
             <div class="nav flex-column mt-2">
                 <a class="nav-link active" id="nav-dashboard" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> Interactive Dashboard</a>
                 <a class="nav-link" id="nav-reports" onclick="switchTab('reports')"><i class="fa-solid fa-file-contract text-warning"></i> Real-Time Reports</a>
+                <a class="nav-link" id="nav-team" onclick="switchTab('team')"><i class="fa-solid fa-people-group"></i> Dedicated Team</a>
                 <a class="nav-link" id="nav-hr" onclick="switchTab('hr')"><i class="fa-solid fa-users-gear"></i> Human Resources</a>
                 <a class="nav-link" id="nav-programs" onclick="switchTab('programs')"><i class="fa-solid fa-laptop-file"></i> Programs & M&E</a>
                 <a class="nav-link" id="nav-ledger" onclick="switchTab('ledger')"><i class="fa-solid fa-file-invoice-dollar"></i> Financial Ledger</a>
@@ -402,14 +402,15 @@
                     <span>More</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="mobileMoreMenu">
+                    <li><a class="dropdown-item py-2" onclick="switchTab('team')"><i class="fa-solid fa-people-group me-2 text-success"></i> Dedicated Team</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('programs')"><i class="fa-solid fa-laptop-file me-2 text-success"></i> Programs & M&E</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('ledger')"><i class="fa-solid fa-file-invoice-dollar me-2 text-success"></i> Financial Ledger</a></li>
-                    <li><a class="dropdown-item py-2" onclick="switchTab('assets')"><i class="fa-solid fa-boxes-stacked me-2 text-success"></i> Assets & Inventory</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('assets')"><i class="fa-solid fa-boxes-stacked text-success"></i> Assets & Inventory</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('vault')"><i class="fa-solid fa-vault me-2 text-success"></i> Document Vault</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('vehicles')"><i class="fa-solid fa-car-side me-2 text-warning"></i> Fleet & Vehicles</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('gallery')"><i class="fa-solid fa-images me-2 text-success"></i> Media Gallery</a></li>
                     <li><a class="dropdown-item py-2" onclick="switchTab('contact')"><i class="fa-solid fa-address-book me-2 text-success"></i> Registration</a></li>
-                    <li><a class="dropdown-item py-2" onclick="switchTab('admin')"><i class="fa-solid fa-gears --> me-2 text-dark"></i> Admin Core</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('admin')"><i class="fa-solid fa-gears me-2 text-dark"></i> Admin Core</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item text-danger py-2" onclick="performLogout()"><i class="fa-solid fa-right-from-bracket me-2"></i> Sign Out</a></li>
                 </ul>
@@ -451,6 +452,17 @@
         let hrData = [
             { id: "EMP-01", name: "Sarah Jenkins", role: "Dean of Studies", dept: "Academics", status: "Active" },
             { id: "EMP-02", name: "Albert Cole", role: "Financial Controller", dept: "Finance", status: "Active" }
+        ];
+
+        let teamData = [
+            { 
+                id: "TEAM-01", 
+                name: "Dr. Marcus Vance", 
+                age: 52, 
+                role: "Board Member", 
+                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80", 
+                bio: "Dr. Marcus Vance brings over twenty-five years of research methodology management and institutional execution to the development structures of EARN Institute Inc. He received his doctoral evaluation qualifications from leading regional infrastructure facilities, spending most of his foundational career designing programmatic baseline structures. Throughout his time advising open academic frameworks, he has facilitated multi-tier organizational strategy workshops focused entirely on building sustainable digital system platforms. His guidance remains highly central to our long-term structural alignment rules across our international operations networks. He coordinates heavily with external programmatic delegates to continuously review field data indicators while strengthening core platform integrity configurations." 
+            }
         ];
 
         let programsData = [
@@ -528,6 +540,7 @@
             switch (tabId) {
                 case 'dashboard': renderDashboard(); break;
                 case 'reports': renderLiveReports(); break;
+                case 'team': renderTeamWorkspace(); break;
                 case 'hr': renderHR(); break;
                 case 'programs': renderPrograms(); break;
                 case 'ledger': renderLedger(); break;
@@ -542,7 +555,7 @@
         }
 
         function handleMobileUniversalAction() {
-            if(activeTabContext === 'reports') {
+            if(activeTabContext === 'reports' || activeTabContext === 'team') {
                 runGlobalReportRefresh();
             } else if(activeTabContext === 'dashboard') {
                 showToast("Tip: Access the Reports tab to compile system layouts.");
@@ -650,6 +663,162 @@
             if (dropdown) { dropdown.value = email; }
         }
 
+        // --- MEET OUR DEDICATED TEAM WORKSPACE MODULE ---
+        function renderTeamWorkspace() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group me-2 text-success"></i>Team Profile Matrix</h3>
+                            <p class="text-muted m-0 small">Publish and manage public-facing biographical data profiles for staff, board members, and partners.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-3 shadow-sm mb-5">
+                    <h2 class="text-center fw-extrabold text-dark mb-4 text-uppercase tracking-wide" style="font-size: 2rem;">Meet our Dedicated Team</h2>
+                    
+                    <div class="row g-4 justify-content-center" id="public-team-grid">
+                        ${teamData.map((member, index) => `
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border: 1px solid #e0e0e0; border-radius: 12px;">
+                                    <div style="width: 100%; height: 260px; background-color: #f4f4f4; overflow: hidden;">
+                                        <img src="${member.image}" alt="${member.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </div>
+                                    <div class="card-body d-flex flex-column p-4">
+                                        <h4 class="fw-bold text-dark mb-1">${member.name}</h4>
+                                        <div class="d-flex align-items-center gap-2 mb-3">
+                                            <span class="badge bg-success" style="font-weight: 600; font-size: 0.8rem; padding: 5px 10px;">${member.role}</span>
+                                            <span class="text-secondary small fw-bold">Age: ${member.age}</span>
+                                        </div>
+                                        <p class="card-text text-muted small lh-base text-justify" style="white-space: pre-line; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                                            ${member.bio}
+                                        </p>
+                                        <div class="mt-auto pt-3 border-top text-end">
+                                            <button class="btn btn-xs btn-outline-danger py-1 px-2" onclick="deleteTeamMember(${index})">
+                                                <i class="fa-solid fa-trash-can me-1"></i> Remove Profile
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${teamData.length === 0 ? `<div class="col-12 text-center text-muted py-5">No team metadata profiles published inside node storage registry.</div>` : ''}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white mx-auto p-4 p-md-5" style="max-width: 750px; border-radius: 16px;">
+                    <div class="text-center mb-4 border-bottom pb-3">
+                        <h4 class="fw-bold text-success m-0"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Upload Team & Partner Information</h4>
+                        <p class="text-muted small m-0 mt-1">Populate profiles to the localized organization file array systems.</p>
+                    </div>
+
+                    <form id="teamUploadForm" onsubmit="submitTeamMemberForm(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-8">
+                                <label for="memberName" class="form-label small fw-bold text-secondary">Full Name</label>
+                                <input type="text" id="memberName" class="form-control" placeholder="e.g., Prof. Sarah Cole" required style="padding: 10px;">
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <label for="memberAge" class="form-label small fw-bold text-secondary">Age</label>
+                                <input type="number" id="memberAge" class="form-control" placeholder="45" required style="padding: 10px;">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="memberRole" class="form-label small fw-bold text-secondary">Organizational Role</label>
+                                <select id="memberRole" class="form-select" required style="padding: 10px;">
+                                    <option value="" disabled selected>-- Select Assignment Tier --</option>
+                                    <option value="Staff">Staff</option>
+                                    <option value="Board Member">Board Member</option>
+                                    <option value="Partner">Partner</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="memberImage" class="form-label small fw-bold text-secondary">Profile Image File</label>
+                                <input type="file" id="memberImage" class="form-control" accept="image/*" required style="padding: 9px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="memberBio" class="form-label small fw-bold text-secondary m-0">Short Bio (About 500 words and above)</label>
+                                <span class="badge bg-dark text-white shadow-sm" id="bioWordCounter">0 Words</span>
+                            </div>
+                            <textarea id="memberBio" class="form-control" rows="8" placeholder="Provide highly comprehensive structural details regarding professional qualifications, research projects, and background matrices (Minimum 500 words requested)..." required style="resize: vertical; font-size: 0.95rem; line-height: 1.5;" oninput="executeLiveBioWordCount()"></textarea>
+                            <div class="form-text text-muted small mt-1">
+                                <i class="fa-solid fa-circle-exclamation text-warning me-1"></i> Data processing rules mandate deep validation checks ensuring bios meet or exceed 500 words before saving.
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-extrabold border-2 text-uppercase tracking-wider rounded-pill" style="font-weight: 800; color: #1B5E20; border-color: #1B5E20; background: #ffffff;">
+                                Upload to Team <i class="fa-solid fa-user-plus ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function executeLiveBioWordCount() {
+            const field = document.getElementById('memberBio');
+            const counter = document.getElementById('bioWordCounter');
+            if(!field || !counter) return;
+            const content = field.value.trim();
+            const calculatedWords = content === "" ? 0 : content.split(/\s+/).filter(w => w.length > 0).length;
+            
+            counter.innerText = `${calculatedWords} Words`;
+            if(calculatedWords >= 500) {
+                counter.className = "badge bg-success text-white shadow-sm";
+            } else {
+                counter.className = "badge bg-danger text-white shadow-sm";
+            }
+        }
+
+        function submitTeamMemberForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('memberName').value.trim();
+            const age = document.getElementById('memberAge').value;
+            const role = document.getElementById('memberRole').value;
+            const bio = document.getElementById('memberBio').value.trim();
+            const fileInput = document.getElementById('memberImage');
+
+            const words = bio.split(/\s+/).filter(w => w.length > 0).length;
+            if(words < 500) {
+                alert(`Authorization Refused: Your biography currently contains only ${words} words. To ensure standard profile compliance, please expand the summary text data beyond the 500-word criteria framework.`);
+                return;
+            }
+
+            if(fileInput.files && fileInput.files[0]) {
+                triggerLoader(600);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    teamData.push({
+                        id: `TEAM-0${teamData.length + 1}`,
+                        name: name,
+                        age: parseInt(age),
+                        role: role,
+                        image: e.target.result,
+                        bio: bio
+                    });
+                    renderTeamWorkspace();
+                    showToast(`Profile added successfully to the public display grid!`);
+                    addSystemNotification("Team Management", `Published new ${role} profile: ${name}`);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function deleteTeamMember(index) {
+            if(confirm("Are you sure you want to completely purge this team profile from the local platform registry?")) {
+                teamData.splice(index, 1);
+                renderTeamWorkspace();
+                showToast("Profile purged from registry arrays.");
+            }
+        }
+
         // --- REAL-TIME LIVE MASTER REPORTS COMPONENT ---
         function renderLiveReports() {
             document.getElementById("dynamic-module-view").innerHTML = `
@@ -668,12 +837,17 @@
                     </div>
                 </div>
 
-                <!-- Live Master Summary Footprint Counters -->
                 <div class="row g-3 mb-4" id="report-workspace">
                     <div class="col-6 col-md-3">
                         <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-primary">
                             <span class="text-muted small d-block">HR Roster Count</span>
                             <h4 class="fw-bold m-0 text-primary" id="rep-cnt-hr">${hrData.length}</h4>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-info">
+                            <span class="text-muted small d-block">Team Registry Profiles</span>
+                            <h4 class="fw-bold m-0 text-info" id="rep-cnt-team">${teamData.length}</h4>
                         </div>
                     </div>
                     <div class="col-6 col-md-3">
@@ -686,12 +860,6 @@
                         <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-danger">
                             <span class="text-muted small d-block">Vault Inventories</span>
                             <h4 class="fw-bold m-0 text-danger" id="rep-cnt-vlt">${vaultData.length}</h4>
-                        </div>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-warning">
-                            <span class="text-muted small d-block">Delegates Enrolled</span>
-                            <h4 class="fw-bold m-0 text-warning" id="rep-cnt-sub">${submissionHistory.length}</h4>
                         </div>
                     </div>
                 </div>
@@ -722,10 +890,37 @@
                     </div>
                 </div>
 
-                <!-- 2. Integrated Programs Report Data Area -->
+                <!-- 2. Dedicated Team Matrix Hub Block -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file text-success me-2"></i>2. Program & M&E Performance Indices</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group text-info me-2"></i>2. Dedicated Team & Partner Profiles Matrix</h5>
+                        <button class="btn btn-outline-info btn-xs px-2 py-1" onclick="executeSectionModification('team')">Commit Team Structural Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Team ID</th><th>Full Identity</th><th>Age</th><th>Organizational Tier Role</th><th>Biography Content Excerpt</th></tr>
+                            </thead>
+                            <tbody>
+                                ${teamData.map((m, i) => `
+                                    <tr>
+                                        <td><strong>${m.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-name-${i}">${m.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-age-${i}">${m.age}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-role-${i}">${m.role}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-bio-${i}" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${m.bio}</td>
+                                    </tr>
+                                `).join('')}
+                                ${teamData.length === 0 ? `<tr><td colspan="5" class="text-center text-muted small py-2">No team profiles active in localized registry.</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Integrated Programs Report Data Area -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file text-success me-2"></i>3. Program & M&E Performance Indices</h5>
                         <button class="btn btn-outline-success btn-xs px-2 py-1" onclick="executeSectionModification('programs')">Commit M&E Shifts</button>
                     </div>
                     <div class="table-responsive">
@@ -748,10 +943,10 @@
                     </div>
                 </div>
 
-                <!-- 3. Financial Ledger Report Data Area -->
+                <!-- 4. Financial Ledger Report Data Area -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar text-danger me-2"></i>3. Financial Ledger Statements</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar text-danger me-2"></i>4. Financial Ledger Statements</h5>
                         <button class="btn btn-outline-danger btn-xs px-2 py-1" onclick="executeSectionModification('ledger')">Commit Transaction Shifts</button>
                     </div>
                     <div class="table-responsive">
@@ -774,10 +969,10 @@
                     </div>
                 </div>
 
-                <!-- 4. Inventory & Asset Management Area -->
+                <!-- 5. Inventory & Asset Management Area -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked text-secondary me-2"></i>4. Inventory & Capital Asset Roster</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked text-secondary me-2"></i>5. Inventory & Capital Asset Roster</h5>
                         <button class="btn btn-outline-secondary btn-xs px-2 py-1" onclick="executeSectionModification('assets')">Commit Asset Shifts</button>
                     </div>
                     <div class="table-responsive">
@@ -800,10 +995,10 @@
                     </div>
                 </div>
 
-                <!-- 5. Document Vault Area -->
+                <!-- 6. Document Vault Area -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault text-info me-2"></i>5. Secured Vault File Registry</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault text-info me-2"></i>6. Secured Vault File Registry</h5>
                         <button class="btn btn-outline-info btn-xs px-2 py-1" onclick="executeSectionModification('vault')">Commit Document Indexes</button>
                     </div>
                     <div class="table-responsive">
@@ -825,10 +1020,10 @@
                     </div>
                 </div>
 
-                <!-- 6. Fleet Telemetry Area -->
+                <!-- 7. Fleet Telemetry Area -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side text-warning me-2"></i>6. Logistical Fleet Manifest</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side text-warning me-2"></i>7. Logistical Fleet Manifest</h5>
                         <button class="btn btn-outline-warning btn-xs px-2 py-1" onclick="executeSectionModification('vehicles')">Commit Fleet Telemetry</button>
                     </div>
                     <div class="table-responsive">
@@ -850,10 +1045,10 @@
                     </div>
                 </div>
 
-                <!-- 7. Media Gallery Inventory Listing -->
+                <!-- 8. Media Gallery Inventory Listing -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-images text-success me-2"></i>7. Compiled Graphic & Asset Attachments</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-images text-success me-2"></i>8. Compiled Graphic & Asset Attachments</h5>
                         <button class="btn btn-outline-success btn-xs px-2 py-1" onclick="executeSectionModification('gallery')">Commit Asset Filenames</button>
                     </div>
                     <div class="table-responsive">
@@ -874,10 +1069,10 @@
                     </div>
                 </div>
 
-                <!-- 8. Registration Forms Submission Registry -->
+                <!-- 9. Registration Forms Submission Registry -->
                 <div class="report-section shadow-sm mb-5">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book text-success me-2"></i>8. Internal Registration Submissions Archive</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book text-success me-2"></i>9. Internal Registration Submissions Archive</h5>
                         <button class="btn btn-outline-dark btn-xs px-2 py-1" onclick="executeSectionModification('submissions')">Refresh Records</button>
                     </div>
                     <div class="table-responsive">
@@ -887,7 +1082,7 @@
                             </thead>
                             <tbody>
                                 ${submissionHistory.length === 0 ? `<tr><td colspan="4" class="text-center text-muted small py-3">No active member forms filed inside current session node.</td></tr>` : 
-                                  submissionHistory.map((sub, i) => `
+                                  submissionHistory.map((sub) => `
                                     <tr>
                                         <td><strong>${sub.name}</strong></td>
                                         <td>${sub.email}</td>
@@ -901,7 +1096,6 @@
                 </div>
             `;
             
-            // Set dynamic report generation stamp inline
             const timestampEl = document.getElementById('report-timestamp');
             if (timestampEl) {
                 timestampEl.innerText = `Generated Matrix Layout Node: ${new Date().toLocaleString()}`;
@@ -924,6 +1118,13 @@
                         emp.role = document.getElementById(`rep-hr-role-${i}`).innerText.trim();
                         emp.dept = document.getElementById(`rep-hr-dept-${i}`).innerText.trim();
                         emp.status = document.getElementById(`rep-hr-status-${i}`).innerText.trim();
+                    });
+                } else if (moduleKey === 'team') {
+                    teamData.forEach((m, i) => {
+                        m.name = document.getElementById(`rep-team-name-${i}`).innerText.trim();
+                        m.age = parseInt(document.getElementById(`rep-team-age-${i}`).innerText.trim()) || m.age;
+                        m.role = document.getElementById(`rep-team-role-${i}`).innerText.trim();
+                        m.bio = document.getElementById(`rep-team-bio-${i}`).innerText.trim();
                     });
                 } else if (moduleKey === 'programs') {
                     programsData.forEach((p, i) => {
@@ -1022,9 +1223,9 @@
                         <div class="card border-0 shadow-sm p-4 bg-white">
                             <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-bolt text-warning me-2"></i>Quick Administrative Access</h5>
                             <div class="d-flex flex-wrap gap-2">
-                                <button class="btn btn-warning btn-sm text-dark fw-bold" onclick="switchTab('reports')">Open Real-Time Master Reports</button>
-                                <button class="btn btn-outline-success btn-sm" onclick="switchTab('hr')">View Full HR Directory</button>
-                                <button class="btn btn-outline-dark btn-sm" onclick="switchTab('gallery')">Media Files Repository</button>
+                                <button class="btn btn-warning btn-sm text-dark fw-bold" onclick="switchTab('team')">View Dedicated Team Cards</button>
+                                <button class="btn btn-outline-success btn-sm" onclick="switchTab('reports')">Open Real-Time Master Reports</button>
+                                <button class="btn btn-outline-dark btn-sm" onclick="switchTab('hr')">View Full HR Directory</button>
                             </div>
                         </div>
                     </div>
@@ -1642,7 +1843,7 @@
         }
 
         function triggerDatabaseBackup() {
-            const packageData = { dashboard: dashboardStats, hr: hrData, programs: programsData, ledger: ledgerData, assets: assetData, vault: vaultData, vehicles: vehicleData, gallery: galleryData, timestamp: new Date().toISOString() };
+            const packageData = { dashboard: dashboardStats, team: teamData, hr: hrData, programs: programsData, ledger: ledgerData, assets: assetData, vault: vaultData, vehicles: vehicleData, gallery: galleryData, timestamp: new Date().toISOString() };
             const fileString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData, null, 4));
             const downloader = document.createElement('a');
             downloader.setAttribute("href", fileString);
@@ -1715,13 +1916,7 @@
             toast.show();
         }
 
-        // --- INTEGRATED REPORT UTILITIES (FORMERLY FLOATING CODES) ---
-        
-        /**
-         * Parses live data out of an available HTML table context to include inline edits
-         * @param {string} tableId Element identifier of target report table
-         * @returns {Array<Array<string>>} Matrix array representing structural table contents
-         */
+        // --- INTEGRATED REPORT UTILITIES ---
         function extractTableData(tableId = "report-table-hr") {
             const table = document.getElementById(tableId);
             const structuralData = [];
@@ -1738,9 +1933,6 @@
             return structuralData;
         }
 
-        /**
-         * Transforms structural dataset into an unformatted CSV object for local download
-         */
         function exportToCSV() {
             const dataMatrix = extractTableData("report-table-hr");
             const csvContent = "data:text/csv;charset=utf-8," 
@@ -1756,11 +1948,7 @@
             showToast("CSV report manifest generated and dispatched.");
         }
 
-        /**
-         * Compiles target reporting area container directly into high-fidelity PDF outputs
-         */
         function exportToPDF() {
-            // Checks if external layout engine script dependency library (html2pdf) exists
             if (typeof html2pdf !== 'undefined') {
                 const reportElement = document.getElementById('report-workspace');
                 const configurationOptions = {
@@ -1777,9 +1965,6 @@
             }
         }
 
-        /**
-         * UI Toggles for interactive modal systems
-         */
         function toggleShareModal(modalId) {
             const targets = document.getElementById(`${modalId}-modal`);
             if(targets) {
@@ -1787,9 +1972,6 @@
             }
         }
 
-        /**
-         * Processes data extraction and simulates an API POST payload delivery to external endpoints
-         */
         function executeEmailShare(event) {
             event.preventDefault();
             const recipient = document.getElementById('share-recipient').value;
@@ -1808,9 +1990,6 @@
             toggleShareModal('email');
         }
 
-        /**
-         * Dynamic Cloud Platform Handshake handler
-         */
         function shareToCloud(ecosystemTarget) {
             const currentStructure = extractTableData();
             const manifestPayload = {
@@ -1824,7 +2003,6 @@
             alert(`Authorization Request Routed: Dispatched structured matrix arrays directly to standard connection listeners inside ${ecosystemTarget}.`);
         }
 
-        // Global DOM Initializer
         window.addEventListener("DOMContentLoaded", () => {
             runTimestampService();
             updateNotificationUI();
