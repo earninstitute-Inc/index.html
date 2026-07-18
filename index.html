@@ -143,7 +143,7 @@
         }
 
         .mobile-nav-item.active {
-            color: var(--primary-green);
+            color: var(--primary-green) !important;
         }
 
         .mobile-fab {
@@ -396,7 +396,7 @@
                 <i class="fa-solid fa-users-gear"></i>
                 <span>HR</span>
             </button>
-            <div class="dropup">
+            <div class="dropup d-flex align-items-center justify-content-center">
                 <button class="mobile-nav-item dropdown-toggle" type="button" id="mobileMoreMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fa-solid fa-ellipsis"></i>
                     <span>More</span>
@@ -535,7 +535,12 @@
 
             document.querySelectorAll('.mobile-nav-item').forEach(btn => btn.classList.remove('active'));
             const mobileActiveBtn = document.getElementById(`m-nav-${tabId}`);
-            if (mobileActiveBtn) mobileActiveBtn.classList.add('active');
+            if (mobileActiveBtn) {
+                mobileActiveBtn.classList.add('active');
+            } else {
+                const moreMenuBtn = document.getElementById('mobileMoreMenu');
+                if (moreMenuBtn) moreMenuBtn.classList.add('active');
+            }
 
             switch (tabId) {
                 case 'dashboard': renderDashboard(); break;
@@ -559,6 +564,16 @@
                 runGlobalReportRefresh();
             } else if(activeTabContext === 'dashboard') {
                 showToast("Tip: Access the Reports tab to compile system layouts.");
+            } else if(activeTabContext === 'hr') {
+                addNewStaff();
+            } else if(activeTabContext === 'programs') {
+                addNewProgram();
+            } else if(activeTabContext === 'ledger') {
+                addNewLedger();
+            } else if(activeTabContext === 'assets') {
+                addNewAsset();
+            } else if(activeTabContext === 'vehicles') {
+                addNewVehicle();
             } else {
                 showToast(`Current contextual module workspace: ${activeTabContext.toUpperCase()}`);
             }
