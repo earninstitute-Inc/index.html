@@ -252,6 +252,8 @@
             #main-content { 
                 margin-left: 0; 
                 padding-bottom: 95px;
+                padding-left: 12px;
+                padding-right: 12px;
             }
             .sidebar-toggle-btn { display: inline-block; }
             .mobile-bottom-nav { display: flex; }
@@ -442,74 +444,72 @@
 
         let activeTabContext = "dashboard";
 
-        let dashboardStats = {
-            staffCount: 12,
-            ledgerRecords: 24,
-            activePrograms: 6,
-            vaultDocs: 18
-        };
-
+        // --- GLOBAL ARRAYS WITH MOCK FALLBACKS ---
+        let dashboardStats = { staffCount: 12, ledgerRecords: 24, activePrograms: 6, vaultDocs: 18 };
         let hrData = [
             { id: "EMP-01", name: "Sarah Jenkins", role: "Dean of Studies", dept: "Academics", status: "Active" },
             { id: "EMP-02", name: "Albert Cole", role: "Financial Controller", dept: "Finance", status: "Active" }
         ];
-
         let teamData = [];
-
         let programsData = [
             { id: "PRG-201", title: "Global Public Health Framework", head: "Dr. Rachel Green", progress: "85%", kpi: "Improve clean water access", target: "95%" },
             { id: "PRG-202", title: "Enterprise Systems Dev", head: "Eng. Davis", progress: "40%", kpi: "Acode platform testing cycles", target: "100%" }
         ];
-
         let ledgerData = [
             { ref: "TX-9041", desc: "Local Server Grid Renewal", type: "Expense", amount: "$1,240.00", status: "Approved" },
             { ref: "TX-9042", desc: "Grant Allocation Tranche B", type: "Income", amount: "$18,500.00", status: "Completed" }
         ];
-
         let assetData = [
             { id: 101, name: "Lenovo ThinkPad Laptop", location: "Main Lab", status: "Allocated", owner: "Dept. Head" },
             { id: 102, name: "Epson Projector H200", location: "Conference Hall A", status: "Available", owner: "Facility Admin" }
         ];
-
         let vaultData = [
             { docId: "DOC-90", name: "Institutional Policy Master", format: "PDF", size: "2.4 MB", content: "data:text/plain;charset=utf-8,Mock PDF Content Document" },
             { docId: "DOC-91", name: "Annual Financial Statement 2025", format: "XLSX", size: "14.1 MB", content: "data:text/plain;charset=utf-8,Mock Excel Content Sheet" }
         ];
-
         let vehicleData = [
             { plate: "EARN-882", model: "Toyota Hiace Van", driver: "Driver John", status: "Active Transit" },
             { plate: "EARN-104", model: "Mitsubishi L300", driver: "Driver Mark", status: "In Maintenance" }
         ];
-
         let galleryData = [
             { id: 1, name: "EARN Campus Building.jpg", type: "image", src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80" },
             { id: 2, name: "Sample Structural Guide.mp4", type: "video", src: "https://www.w3schools.com/html/mov_bbb.mp4" }
         ];
-
         let customMEColumns = [];
         let submissionHistory = [];
 
-        // --- LOCAL STORAGE STATE ENGINE ---
+        // --- ENHANCED STORAGE SYNCHRONIZATION ENGINE ---
         function loadSavedStateData() {
             try {
-                if(localStorage.getItem("eivoms_team_store")) {
-                    teamData = JSON.parse(localStorage.getItem("eivoms_team_store"));
-                }
-                if(localStorage.getItem("eivoms_submissions_store")) {
-                    submissionHistory = JSON.parse(localStorage.getItem("eivoms_submissions_store"));
-                }
+                if(localStorage.getItem("eivoms_dashboard_store")) dashboardStats = JSON.parse(localStorage.getItem("eivoms_dashboard_store"));
+                if(localStorage.getItem("eivoms_hr_store")) hrData = JSON.parse(localStorage.getItem("eivoms_hr_store"));
+                if(localStorage.getItem("eivoms_team_store")) teamData = JSON.parse(localStorage.getItem("eivoms_team_store"));
+                if(localStorage.getItem("eivoms_programs_store")) programsData = JSON.parse(localStorage.getItem("eivoms_programs_store"));
+                if(localStorage.getItem("eivoms_mecols_store")) customMEColumns = JSON.parse(localStorage.getItem("eivoms_mecols_store"));
+                if(localStorage.getItem("eivoms_ledger_store")) ledgerData = JSON.parse(localStorage.getItem("eivoms_ledger_store"));
+                if(localStorage.getItem("eivoms_asset_store")) assetData = JSON.parse(localStorage.getItem("eivoms_asset_store"));
+                if(localStorage.getItem("eivoms_vault_store")) vaultData = JSON.parse(localStorage.getItem("eivoms_vault_store"));
+                if(localStorage.getItem("eivoms_vehicle_store")) vehicleData = JSON.parse(localStorage.getItem("eivoms_vehicle_store"));
+                if(localStorage.getItem("eivoms_gallery_store")) galleryData = JSON.parse(localStorage.getItem("eivoms_gallery_store"));
+                if(localStorage.getItem("eivoms_submissions_store")) submissionHistory = JSON.parse(localStorage.getItem("eivoms_submissions_store"));
             } catch (e) {
-                console.error("State recovery interrupted", e);
+                console.error("State engine initialization interrupted:", e);
             }
         }
 
-        function commitTeamState() {
-            localStorage.setItem("eivoms_team_store", JSON.stringify(teamData));
+        function commitDashboardState() { localStorage.setItem("eivoms_dashboard_store", JSON.stringify(dashboardStats)); }
+        function commitHRState() { localStorage.setItem("eivoms_hr_store", JSON.stringify(hrData)); }
+        function commitTeamState() { localStorage.setItem("eivoms_team_store", JSON.stringify(teamData)); }
+        function commitProgramsState() { 
+            localStorage.setItem("eivoms_programs_store", JSON.stringify(programsData)); 
+            localStorage.setItem("eivoms_mecols_store", JSON.stringify(customMEColumns));
         }
-
-        function commitSubmissionsState() {
-            localStorage.setItem("eivoms_submissions_store", JSON.stringify(submissionHistory));
-        }
+        function commitLedgerState() { localStorage.setItem("eivoms_ledger_store", JSON.stringify(ledgerData)); }
+        function commitAssetState() { localStorage.setItem("eivoms_asset_store", JSON.stringify(assetData)); }
+        function commitVaultState() { localStorage.setItem("eivoms_vault_store", JSON.stringify(vaultData)); }
+        function commitVehicleState() { localStorage.setItem("eivoms_vehicle_store", JSON.stringify(vehicleData)); }
+        function commitGalleryState() { localStorage.setItem("eivoms_gallery_store", JSON.stringify(galleryData)); }
+        function commitSubmissionsState() { localStorage.setItem("eivoms_submissions_store", JSON.stringify(submissionHistory)); }
 
         function toggleLoginPassword() {
             const pw = document.getElementById('login-password');
@@ -588,11 +588,11 @@
             } else if(activeTabContext === 'vehicles') {
                 addNewVehicle();
             } else {
-                showToast(`Current contextual module workspace: ${activeTabContext.toUpperCase()}`);
+                showToast(`Current workspace context: ${activeTabContext.toUpperCase()}`);
             }
         }
 
-        // --- SESSION AND DOMAIN LOGIN LOGIC ---
+        // --- SESSION LOGIC ---
         const Session = {
             login: function() {
                 const selectedEmail = document.getElementById("login-email").value;
@@ -602,14 +602,12 @@
                     alert("Please select a valid job title to log in.");
                     return;
                 }
-
                 if (passwordInput !== "earn@1993") {
                     alert("Authorization Refused: Incorrect Password.");
                     return;
                 }
 
                 const matchingUser = authorizedUsers.find(user => user.email === selectedEmail);
-
                 if (!matchingUser) {
                     alert("Access Denied: Selected title is not recognized.");
                     return;
@@ -691,21 +689,20 @@
             if (dropdown) { dropdown.value = email; }
         }
 
-        // --- DEDICATED TEAM WORKSPACE MODULE (With Real-Time Update Execution) ---
+        // --- DEDICATED TEAM WORKSPACE MODULE ---
         function renderTeamWorkspace() {
             document.getElementById("dynamic-module-view").innerHTML = `
                 <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group me-2 text-success"></i>Team Profile Matrix</h3>
-                            <p class="text-muted m-0 small">Publish and manage biographical data profiles for staff, board members, and partners.</p>
+                            <p class="text-muted m-0 small">Publish and manage biological data profiles for staff, board members, and partners.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-4 rounded-3 shadow-sm mb-5">
                     <h3 class="text-center fw-bold text-primary mb-4 text-uppercase tracking-wide">Meet Our Dedicated Team</h3>
-                    
                     <div class="row g-4 justify-content-center" id="teamDisplayGrid">
                         ${teamData.map((member, index) => `
                             <div class="col-12 col-md-6 col-lg-4">
@@ -782,11 +779,11 @@
                                 <label for="memberBio" class="form-label small fw-bold text-secondary m-0">Short Bio</label>
                                 <span class="badge bg-dark text-white shadow-sm" id="bioWordCounter">0 Words</span>
                             </div>
-                            <textarea id="memberBio" class="form-control" rows="6" placeholder="Provide details regarding professional qualifications, backgrounds, and specialties..." required style="resize: vertical; font-size: 0.95rem;" oninput="executeLiveBioWordCount()"></textarea>
+                            <textarea id="memberBio" class="form-control" rows="6" placeholder="Provide details regarding qualifications..." required style="resize: vertical; font-size: 0.95rem;" oninput="executeLiveBioWordCount()"></textarea>
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-extrabold border-2 text-uppercase tracking-wider rounded-pill" style="font-weight: 800; color: #1B5E20; border-color: #1B5E20; background: #ffffff;">
+                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-extrabold border-2 text-uppercase" style="font-weight: 800; color: #1B5E20; border-color: #1B5E20; background: #ffffff;">
                                 Upload to Team <i class="fa-solid fa-user-plus ms-2"></i>
                             </button>
                         </div>
@@ -812,47 +809,32 @@
             const bio = document.getElementById('memberBio').value.trim();
             const fileInput = document.getElementById('memberImage');
 
-            let imageUrl = 'https://via.placeholder.com/150';
+            const insertMember = (imgSrc) => {
+                teamData.push({
+                    id: `TEAM-0${teamData.length + 1}`,
+                    name, age: parseInt(age), role, image: imgSrc, bio
+                });
+                commitTeamState();
+                renderTeamWorkspace();
+                showToast(`Profile published completely.`);
+            };
 
             if(fileInput.files && fileInput.files[0]) {
                 triggerLoader(600);
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    teamData.push({
-                        id: `TEAM-0${teamData.length + 1}`,
-                        name: name,
-                        age: parseInt(age),
-                        role: role,
-                        image: e.target.result,
-                        bio: bio
-                    });
-                    commitTeamState();
-                    renderTeamWorkspace();
-                    showToast(`Profile successfully published onto the page!`);
-                    addSystemNotification("Team Management", `Published new profile: ${name} (${role})`);
-                };
+                reader.onload = function(e) { insertMember(e.target.result); };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                teamData.push({
-                    id: `TEAM-0${teamData.length + 1}`,
-                    name: name,
-                    age: parseInt(age),
-                    role: role,
-                    image: imageUrl,
-                    bio: bio
-                });
-                commitTeamState();
-                renderTeamWorkspace();
-                showToast(`Profile successfully published with default avatar placeholder.`);
+                insertMember('https://via.placeholder.com/150');
             }
         }
 
         function deleteTeamMember(index) {
-            if(confirm("Are you sure you want to completely purge this profile?")) {
+            if(confirm("Purge this team profile?")) {
                 teamData.splice(index, 1);
                 commitTeamState();
                 renderTeamWorkspace();
-                showToast("Profile purged from registry loops.");
+                showToast("Profile wiped from registry registers.");
             }
         }
 
@@ -865,7 +847,7 @@
                             <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-contract me-2 text-warning"></i>Real-Time System Reporting Workspace</h3>
                             <p class="text-muted m-0 small" id="report-timestamp">Aggregates layout matrices from all operational modules instantly.</p>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <button class="btn btn-primary btn-sm font-weight-bold" onclick="exportToCSV()"><i class="fa-solid fa-file-csv me-1"></i> Export CSV</button>
                             <button class="btn btn-info btn-sm text-white font-weight-bold" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf me-1"></i> Export PDF</button>
                             <button class="btn btn-success btn-sm font-weight-bold" onclick="runGlobalReportRefresh()"><i class="fa-solid fa-rotate me-1"></i> Sync & Refresh Reports</button>
@@ -900,7 +882,7 @@
                     </div>
                 </div>
 
-                <!-- 1. Human Resources Report Data Area -->
+                <!-- 1. Human Resources Report -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-users-gear text-primary me-2"></i>1. Human Resources Ledger Block</h5>
@@ -926,7 +908,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Dedicated Team Matrix Hub Block -->
+                <!-- 2. Dedicated Team Matrix -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group text-info me-2"></i>2. Dedicated Team & Partner Profiles Matrix</h5>
@@ -935,7 +917,7 @@
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered align-middle">
                             <thead class="table-light small">
-                                <tr><th>Team ID</th><th>Full Identity</th><th>Age</th><th>Organizational Tier Role</th><th>Biography Content Excerpt</th></tr>
+                                <tr><th>Team ID</th><th>Full Identity</th><th>Age</th><th>Role</th><th>Biography</th></tr>
                             </thead>
                             <tbody>
                                 ${teamData.map((m, i) => `
@@ -944,16 +926,16 @@
                                         <td contenteditable="true" class="editable-cell" id="rep-team-name-${i}">${m.name}</td>
                                         <td contenteditable="true" class="editable-cell" id="rep-team-age-${i}">${m.age}</td>
                                         <td contenteditable="true" class="editable-cell" id="rep-team-role-${i}">${m.role}</td>
-                                        <td contenteditable="true" class="editable-cell" id="rep-team-bio-${i}" style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${m.bio}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-bio-${i}" style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.bio}</td>
                                     </tr>
                                 `).join('')}
-                                ${teamData.length === 0 ? `<tr><td colspan="5" class="text-center text-muted small py-2">No team profiles active in localized registry.</td></tr>` : ''}
+                                ${teamData.length === 0 ? `<tr><td colspan="5" class="text-center text-muted small py-2">No team profiles active.</td></tr>` : ''}
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- 3. Integrated Programs Report Data Area -->
+                <!-- 3. Integrated Programs Report -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file text-success me-2"></i>3. Program & M&E Performance Indices</h5>
@@ -979,7 +961,7 @@
                     </div>
                 </div>
 
-                <!-- 4. Financial Ledger Report Data Area -->
+                <!-- 4. Financial Ledger Report -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar text-danger me-2"></i>4. Financial Ledger Statements</h5>
@@ -988,7 +970,7 @@
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered align-middle">
                             <thead class="table-light small">
-                                <tr><th>Reference</th><th>Description Item</th><th>Account Category</th><th>Settle Value</th><th>Audit Status</th></tr>
+                                <tr><th>Reference</th><th>Description</th><th>Type</th><th>Value</th><th>Audit Status</th></tr>
                             </thead>
                             <tbody>
                                 ${ledgerData.map((item, i) => `
@@ -1005,7 +987,7 @@
                     </div>
                 </div>
 
-                <!-- 5. Inventory & Asset Management Area -->
+                <!-- 5. Inventory & Asset Management -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked text-secondary me-2"></i>5. Inventory & Capital Asset Roster</h5>
@@ -1014,7 +996,7 @@
                     <div class="table-responsive">
                         <table class="table table-sm table-bordered align-middle">
                             <thead class="table-light small">
-                                <tr><th>Asset Key</th><th>Equipment Descriptor</th><th>Allocation Room</th><th>State</th><th>Primary Holder</th></tr>
+                                <tr><th>Asset Key</th><th>Equipment Descriptor</th><th>Allocation</th><th>State</th><th>Primary Holder</th></tr>
                             </thead>
                             <tbody>
                                 ${assetData.map((ast, i) => `
@@ -1031,7 +1013,7 @@
                     </div>
                 </div>
 
-                <!-- 6. Document Vault Area -->
+                <!-- 6. Document Vault -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault text-info me-2"></i>6. Secured Vault File Registry</h5>
@@ -1056,7 +1038,7 @@
                     </div>
                 </div>
 
-                <!-- 7. Fleet Telemetry Area -->
+                <!-- 7. Fleet Telemetry -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side text-warning me-2"></i>7. Logistical Fleet Manifest</h5>
@@ -1081,10 +1063,10 @@
                     </div>
                 </div>
 
-                <!-- 8. Media Gallery Inventory Listing -->
+                <!-- 8. Media Gallery Inventory -->
                 <div class="report-section shadow-sm">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-images text-success me-2"></i>8. Compiled Graphic & Asset Attachments</h5>
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-images text-success me-2"></i>8. Compiled Graphic Attachments</h5>
                         <button class="btn btn-outline-success btn-xs px-2 py-1" onclick="executeSectionModification('gallery')">Commit Asset Filenames</button>
                     </div>
                     <div class="table-responsive">
@@ -1117,7 +1099,7 @@
                                 <tr><th>Delegate Profile</th><th>Email Contact</th><th>Phone Number</th><th>Identity Gender</th></tr>
                             </thead>
                             <tbody>
-                                ${submissionHistory.length === 0 ? `<tr><td colspan="4" class="text-center text-muted small py-3">No active member forms filed inside current session node.</td></tr>` : 
+                                ${submissionHistory.length === 0 ? `<tr><td colspan="4" class="text-center text-muted small py-3">No active member forms inside current storage loop.</td></tr>` : 
                                   submissionHistory.map((sub) => `
                                     <tr>
                                         <td><strong>${sub.name}</strong></td>
@@ -1142,7 +1124,7 @@
             triggerLoader(500);
             setTimeout(() => {
                 renderLiveReports();
-                showToast("Aggregated reports compiled across all environment structures.");
+                showToast("Aggregated report modules synchronized completely.");
             }, 500);
         }
 
@@ -1162,7 +1144,7 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             document.body.removeChild(downloadAnchor);
-            showToast("Registrations spreadsheet exported successfully.");
+            showToast("Registrations spreadsheet generated.");
         }
 
         function executeSectionModification(moduleKey) {
@@ -1174,6 +1156,7 @@
                         emp.dept = document.getElementById(`rep-hr-dept-${i}`).innerText.trim();
                         emp.status = document.getElementById(`rep-hr-status-${i}`).innerText.trim();
                     });
+                    commitHRState();
                 } else if (moduleKey === 'team') {
                     teamData.forEach((m, i) => {
                         m.name = document.getElementById(`rep-team-name-${i}`).innerText.trim();
@@ -1187,6 +1170,7 @@
                         p.head = document.getElementById(`rep-prg-head-${i}`).innerText.trim();
                         p.progress = document.getElementById(`rep-prg-progress-${i}`).innerText.trim();
                     });
+                    commitProgramsState();
                 } else if (moduleKey === 'ledger') {
                     ledgerData.forEach((item, i) => {
                         item.desc = document.getElementById(`rep-led-desc-${i}`).innerText.trim();
@@ -1194,6 +1178,7 @@
                         item.amount = document.getElementById(`rep-led-amount-${i}`).innerText.trim();
                         item.status = document.getElementById(`rep-led-status-${i}`).innerText.trim();
                     });
+                    commitLedgerState();
                 } else if (moduleKey === 'assets') {
                     assetData.forEach((ast, i) => {
                         ast.name = document.getElementById(`rep-ast-name-${i}`).innerText.trim();
@@ -1201,25 +1186,28 @@
                         ast.status = document.getElementById(`rep-ast-status-${i}`).innerText.trim();
                         ast.owner = document.getElementById(`rep-ast-owner-${i}`).innerText.trim();
                     });
+                    commitAssetState();
                 } else if (moduleKey === 'vault') {
                     vaultData.forEach((v, i) => {
                         v.name = document.getElementById(`rep-vlt-name-${i}`).innerText.trim();
                         v.format = document.getElementById(`rep-vlt-format-${i}`).innerText.trim();
                         v.size = document.getElementById(`rep-vlt-size-${i}`).innerText.trim();
                     });
+                    commitVaultState();
                 } else if (moduleKey === 'vehicles') {
                     vehicleData.forEach((v, i) => {
                         v.model = document.getElementById(`rep-veh-model-${i}`).innerText.trim();
                         v.driver = document.getElementById(`rep-veh-driver-${i}`).innerText.trim();
                         v.status = document.getElementById(`rep-veh-status-${i}`).innerText.trim();
                     });
+                    commitVehicleState();
                 } else if (moduleKey === 'gallery') {
                     galleryData.forEach((g, i) => {
                         g.name = document.getElementById(`rep-gal-name-${i}`).innerText.trim();
                     });
+                    commitGalleryState();
                 }
-                showToast(`Changes for target section [${moduleKey.toUpperCase()}] executed and updated.`);
-                addSystemNotification("Reporting Engine", `Modified elements committed inside section: ${moduleKey}`);
+                showToast(`Section edits for [${moduleKey.toUpperCase()}] committed into permanent memory.`);
             } catch (err) {
                 showToast("Error processing structural change overrides.");
             }
@@ -1293,14 +1281,15 @@
             dashboardStats.ledgerRecords = parseInt(document.getElementById("db-ledger").innerText) || 0;
             dashboardStats.activePrograms = parseInt(document.getElementById("db-programs").innerText) || 0;
             dashboardStats.vaultDocs = parseInt(document.getElementById("db-vault").innerText) || 0;
-            showToast("Operational statistics saved to local storage!");
-            addSystemNotification("System Dashboard", "Interactive dashboard KPI cards committed.");
+            commitDashboardState();
+            showToast("Dashboard KPIs updated permanently.");
         }
 
         function deleteStat(key) {
             dashboardStats[key] = 0;
+            commitDashboardState();
             renderDashboard();
-            showToast(`KPI Metric cleared successfully.`);
+            showToast(`Metric cleared.`);
         }
 
         // --- 2. HUMAN RESOURCES ---
@@ -1318,9 +1307,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle dynamic-table">
                             <thead>
-                                <tr>
-                                    <th>ID Card</th><th>Employee Name</th><th>Assigned Role</th><th>Office Section</th><th>Operating Status</th><th>Management Actions</th>
-                                </tr>
+                                <tr><th>ID Card</th><th>Employee Name</th><th>Role</th><th>Section</th><th>Status</th><th>Control Actions</th></tr>
                             </thead>
                             <tbody>
                                 ${hrData.map((emp, index) => `
@@ -1348,8 +1335,9 @@
         function addNewStaff() {
             const num = hrData.length + 1;
             hrData.push({ id: `EMP-0${num}`, name: "New Associate", role: "Unassigned", dept: "Unassigned", status: "Active" });
+            commitHRState();
             renderHR();
-            showToast("New Employee record created.");
+            showToast("Employee record created.");
         }
 
         function saveHRRow(index) {
@@ -1357,14 +1345,16 @@
             hrData[index].role = document.getElementById(`hr-role-${index}`).innerText.trim();
             hrData[index].dept = document.getElementById(`hr-dept-${index}`).innerText.trim();
             hrData[index].status = document.getElementById(`hr-status-${index}`).innerText.trim();
-            showToast("Employee row updated and stored.");
+            commitHRState();
+            showToast("Employee details committed.");
         }
 
         function deleteHRRow(index) {
-            if(confirm("Are you sure you want to delete this staff record?")) {
+            if(confirm("Delete this staff profile?")) {
                 hrData.splice(index, 1);
+                commitHRState();
                 renderHR();
-                showToast("Staff record deleted successfully.");
+                showToast("Staff profile purged.");
             }
         }
 
@@ -1374,12 +1364,12 @@
                 <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
                     <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                         <div>
-                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file me-2 text-success"></i>Integrated Programs & M&E Framework</h3>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file me-2 text-success"></i>Programs & M&E Framework</h3>
                         </div>
                     </div>
                     <div class="d-flex flex-wrap gap-2 mt-3">
                         <button class="btn btn-success btn-sm" onclick="addNewProgram()"><i class="fa-solid fa-plus me-1"></i> Add Project Row</button>
-                        <button class="btn btn-success btn-sm fw-bold border-2 border-dark" style="color: #ffffff; background-color: #1B5E20;" onclick="addNewMEColumn()"><i class="fa-solid fa-circle-plus me-1"></i> ADD M&E COLUMN</button>
+                        <button class="btn btn-success btn-sm fw-bold border-2 border-dark" style="color:#fff; background-color:#1B5E20;" onclick="addNewMEColumn()"><i class="fa-solid fa-circle-plus me-1"></i> ADD M&E COLUMN</button>
                     </div>
                 </div>
 
@@ -1388,7 +1378,7 @@
                         <table class="table table-hover align-middle dynamic-table" id="me-dynamic-table">
                             <thead>
                                 <tr>
-                                    <th>Ref ID</th><th>Program / Project Title</th><th>Director</th><th>Completion</th><th>Key KPI</th><th>Target</th>
+                                    <th>Ref ID</th><th>Program Title</th><th>Director</th><th>Completion</th><th>Key KPI</th><th>Target</th>
                                     ${customMEColumns.map((col, cIdx) => `<th>${col} <button class="btn btn-link text-white p-0 btn-xs text-decoration-none" onclick="deleteMEColumn(${cIdx})"><i class="fa-solid fa-xmark"></i></button></th>`).join('')}
                                     <th>Actions</th>
                                 </tr>
@@ -1420,24 +1410,27 @@
 
         function addNewProgram() {
             programsData.push({ id: `PRG-${Math.floor(200+Math.random()*100)}`, title: "New Initiative Project", head: "Officer Assg.", progress: "0%", kpi: "System indicator", target: "100%" });
+            commitProgramsState();
             renderPrograms();
-            showToast("Integrated Program evaluation row added.");
+            showToast("Evaluation schema row created.");
         }
 
         function addNewMEColumn() {
-            const label = prompt("Enter text identifier header name for the dynamic M&E custom column:");
+            const label = prompt("Enter standard text header name for custom evaluation column:");
             if(label && label.trim() !== "") {
                 customMEColumns.push(label.trim());
+                commitProgramsState();
                 renderPrograms();
-                showToast(`Dynamic column [${label}] established inside schema.`);
+                showToast(`Dynamic criteria [${label}] attached.`);
             }
         }
 
         function deleteMEColumn(index) {
-            if(confirm("Purge this metric custom column entirely?")) {
+            if(confirm("Drop this custom column completely?")) {
                 customMEColumns.splice(index, 1);
+                commitProgramsState();
                 renderPrograms();
-                showToast("Column metric dropped.");
+                showToast("Column dropped.");
             }
         }
 
@@ -1452,14 +1445,16 @@
                 const cell = document.getElementById(`prog-custom-${index}-${cIdx}`);
                 if(cell) programsData[index]['custom_' + cIdx] = cell.innerText.trim();
             });
+            commitProgramsState();
             showToast("Program matrix saved successfully.");
         }
 
         function deleteProgramRow(index) {
-            if(confirm("Purge program registry row from database?")) {
+            if(confirm("Delete this portfolio layout row?")) {
                 programsData.splice(index, 1);
+                commitProgramsState();
                 renderPrograms();
-                showToast("Evaluation program row deleted.");
+                showToast("Portfolio row removed.");
             }
         }
 
@@ -1476,7 +1471,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle dynamic-table">
                             <thead>
-                                <tr><th>Transaction Ref</th><th>Details / Particulars</th><th>Type</th><th>Settle Value</th><th>Verification State</th><th>Actions</th></tr>
+                                <tr><th>Transaction Ref</th><th>Particulars</th><th>Type</th><th>Settle Value</th><th>Verification State</th><th>Actions</th></tr>
                             </thead>
                             <tbody>
                                 ${ledgerData.map((item, index) => `
@@ -1503,6 +1498,7 @@
 
         function addNewLedger() {
             ledgerData.push({ ref: `TX-${Math.floor(9000+Math.random()*900)}`, desc: "System Operation Log", type: "Expense", amount: "$0.00", status: "Pending" });
+            commitLedgerState();
             renderLedger();
             showToast("Financial record initialized.");
         }
@@ -1512,12 +1508,14 @@
             ledgerData[index].type = document.getElementById(`led-type-${index}`).innerText.trim();
             ledgerData[index].amount = document.getElementById(`led-amount-${index}`).innerText.trim();
             ledgerData[index].status = document.getElementById(`led-status-${index}`).innerText.trim();
-            showToast("Transaction record saved successfully.");
+            commitLedgerState();
+            showToast("Transaction statement committed.");
         }
 
         function deleteLedgerRow(index) {
-            if(confirm("Purge ledger line item?")) {
+            if(confirm("Purge ledger item line?")) {
                 ledgerData.splice(index, 1);
+                commitLedgerState();
                 renderLedger();
                 showToast("Ledger statement deleted.");
             }
@@ -1564,8 +1562,9 @@
         function addNewAsset() {
             const nextId = assetData.length > 0 ? Math.max(...assetData.map(a=>a.id)) + 1 : 101;
             assetData.push({ id: nextId, name: "New Equipment Stock", location: "Warehouse Storage", status: "Available", owner: "Supply Desk" });
+            commitAssetState();
             renderAssets();
-            showToast("New asset stock item recorded.");
+            showToast("Asset stock registered.");
         }
 
         function saveAssetRow(index) {
@@ -1573,14 +1572,16 @@
             assetData[index].location = document.getElementById(`ast-loc-${index}`).innerText.trim();
             assetData[index].status = document.getElementById(`ast-status-${index}`).innerText.trim();
             assetData[index].owner = document.getElementById(`ast-owner-${index}`).innerText.trim();
-            showToast("Asset stock record saved.");
+            commitAssetState();
+            showToast("Asset information saved.");
         }
 
         function deleteAssetRow(index) {
-            if(confirm("Remove this item from the active asset stock registry?")) {
+            if(confirm("Wipe this asset allocation line item?")) {
                 assetData.splice(index, 1);
+                commitAssetState();
                 renderAssets();
-                showToast("Asset deleted.");
+                showToast("Asset allocation removed.");
             }
         }
 
@@ -1601,7 +1602,7 @@
                     <div class="table-responsive">
                         <table class="table table-hover align-middle dynamic-table">
                             <thead>
-                                <tr><th>Document Key</th><th>Filename Identifier</th><th>Document Format</th><th>Storage Allocation</th><th>Actions & Downloads</th></tr>
+                                <tr><th>Document Key</th><th>Filename Handle</th><th>Document Format</th><th>Storage Allocation</th><th>Actions & Downloads</th></tr>
                             </thead>
                             <tbody>
                                 ${vaultData.map((doc, index) => `
@@ -1637,12 +1638,11 @@
                     vaultData.push({
                         docId: `DOC-${Math.floor(100+Math.random()*900)}`,
                         name: file.name.substring(0, file.name.lastIndexOf('.')),
-                        format: format,
-                        size: size,
-                        content: e.target.result
+                        format: format, size: size, content: e.target.result
                     });
+                    commitVaultState();
                     renderVault();
-                    showToast("Document captured and indexed in Vault storage memory.");
+                    showToast("Document saved into permanent memory.");
                 };
                 reader.readAsDataURL(file);
             }
@@ -1650,7 +1650,7 @@
 
         function downloadVaultFile(index) {
             const doc = vaultData[index];
-            if(!doc.content) { showToast("Error: No binary structure linked."); return; }
+            if(!doc.content) { showToast("Error: Missing file source structure."); return; }
             const link = document.createElement('a');
             link.href = doc.content;
             link.download = `${doc.name}.${doc.format.toLowerCase()}`;
@@ -1663,14 +1663,16 @@
             vaultData[index].name = document.getElementById(`vlt-name-${index}`).innerText.trim();
             vaultData[index].format = document.getElementById(`vlt-format-${index}`).innerText.trim();
             vaultData[index].size = document.getElementById(`vlt-size-${index}`).innerText.trim();
-            showToast("Document descriptor edits stored.");
+            commitVaultState();
+            showToast("Document descriptors locked down.");
         }
 
         function deleteVaultRow(index) {
-            if(confirm("Are you sure you want to delete this document from vault records?")) {
+            if(confirm("Permanently wipe document from local storage core?")) {
                 vaultData.splice(index, 1);
+                commitVaultState();
                 renderVault();
-                showToast("Document registry index deleted.");
+                showToast("Document deleted.");
             }
         }
 
@@ -1713,22 +1715,25 @@
 
         function addNewVehicle() {
             vehicleData.push({ plate: "EARN-" + Math.floor(100 + Math.random() * 900), model: "Sedan Chassis", driver: "Awaiting Assignment", status: "Idle" });
+            commitVehicleState();
             renderVehicles();
-            showToast("New vehicle registered to fleet.");
+            showToast("New machine initialized in registry logs.");
         }
 
         function saveVehicleRow(index) {
             vehicleData[index].model = document.getElementById(`veh-model-${index}`).innerText.trim();
             vehicleData[index].driver = document.getElementById(`veh-driver-${index}`).innerText.trim();
             vehicleData[index].status = document.getElementById(`veh-status-${index}`).innerText.trim();
-            showToast("Vehicle telemetry updated.");
+            commitVehicleState();
+            showToast("Vehicle statistics updated.");
         }
 
         function deleteVehicleRow(index) {
-            if(confirm("Remove this vehicle from deployment records?")) {
+            if(confirm("Remove machine from fleet registry logs?")) {
                 vehicleData.splice(index, 1);
+                commitVehicleState();
                 renderVehicles();
-                showToast("Vehicle record purged.");
+                showToast("Machine parsed out completely.");
             }
         }
 
@@ -1775,8 +1780,9 @@
                 
                 reader.onload = function(e) {
                     galleryData.push({ id: Date.now(), name: file.name, type: type, src: e.target.result });
+                    commitGalleryState();
                     renderGallery();
-                    showToast("Media resource uploaded successfully!");
+                    showToast("Resource added to cloud arrays.");
                 };
                 reader.readAsDataURL(file);
             }
@@ -1793,14 +1799,15 @@
         }
 
         function deleteMedia(index) {
-            if(confirm("Delete this attachment from gallery memory?")) {
+            if(confirm("Purge resource object?")) {
                 galleryData.splice(index, 1);
+                commitGalleryState();
                 renderGallery();
-                showToast("Media file deleted.");
+                showToast("Resource purged.");
             }
         }
 
-        // --- 9. MEMBER REGISTRATION / CONTACT FORM (With Session Recovery UI) ---
+        // --- 9. MEMBER REGISTRATION ---
         function renderContactForm() {
             document.getElementById("dynamic-module-view").innerHTML = `
                 <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
@@ -1858,7 +1865,7 @@
                         <table class="table table-sm table-striped">
                             <thead><tr><th>Name</th><th>Email</th><th>Gender</th></tr></thead>
                             <tbody id="quick-submission-tbody">
-                                ${submissionHistory.length === 0 ? `<tr><td colspan="3" class="text-center text-muted small">No entries yet inside session storage.</td></tr>` : 
+                                ${submissionHistory.length === 0 ? `<tr><td colspan="3" class="text-center text-muted small">No entries yet inside storage registers.</td></tr>` : 
                                   submissionHistory.map(s => `<tr><td>${s.name}</td><td>${s.email}</td><td>${s.gender}</td></tr>`).join('')}
                             </tbody>
                         </table>
@@ -1878,7 +1885,7 @@
             submissionHistory.push({ name: `${first} ${last}`, email, phone, gender });
             commitSubmissionsState();
             addSystemNotification("Member Directory", `Registered delegate: ${first} ${last}`);
-            showToast("Form submitted. Entry successfully preserved in storage registers.");
+            showToast("Preserved safely inside persistent registry databases.");
             renderContactForm();
         }
 
@@ -1923,11 +1930,11 @@
             document.body.appendChild(downloader);
             downloader.click();
             downloader.remove();
-            showToast("Database log backup packaged.");
+            showToast("Database storage array configuration extracted safely.");
         }
 
         function resetSystem() {
-            if(confirm("Wiping local configurations will permanently clean schemas. Proceed?")) {
+            if(confirm("Wiping local database registries will completely flush system profiles. Proceed?")) {
                 try { localStorage.clear(); } catch(e) {}
                 window.location.reload();
             }
@@ -1988,18 +1995,13 @@
             toast.show();
         }
 
-        // --- INTEGRATED REPORT UTILITIES ---
         function extractTableData(tableId = "report-table-hr") {
             const table = document.getElementById(tableId);
             const structuralData = [];
-            if (!table) {
-                return [["No active data layout table found matching scope container context."]];
-            }
+            if (!table) return [["No active data layout table found."]];
             for (let row of table.rows) {
                 const rowContent = [];
-                for (let cell of row.cells) {
-                    rowContent.push(cell.innerText.trim());
-                }
+                for (let cell of row.cells) { rowContent.push(cell.innerText.trim()); }
                 structuralData.push(rowContent);
             }
             return structuralData;
@@ -2017,12 +2019,10 @@
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             document.body.removeChild(downloadAnchor);
-            showToast("CSV report manifest generated and dispatched.");
+            showToast("CSV report generated and dispatched.");
         }
 
-        function exportToPDF() {
-            window.print();
-        }
+        function exportToPDF() { window.print(); }
 
         window.addEventListener("DOMContentLoaded", () => {
             loadSavedStateData();
