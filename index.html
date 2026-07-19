@@ -423,7 +423,7 @@
     <script>
         const sys = {
             orgName: "EARN Institute Inc.",
-            buildVersion: "2.2.0-Live Reports Module"
+            buildVersion: "2.3.0-Data Optimization"
         };
 
         const authorizedUsers = [
@@ -454,16 +454,8 @@
             { id: "EMP-02", name: "Albert Cole", role: "Financial Controller", dept: "Finance", status: "Active" }
         ];
 
-        let teamData = [
-            { 
-                id: "TEAM-01", 
-                name: "Dr. Marcus Vance", 
-                age: 52, 
-                role: "Board Member", 
-                image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80", 
-                bio: "Dr. Marcus Vance brings over twenty-five years of research methodology management and institutional execution to the development structures of EARN Institute Inc. He received his doctoral evaluation qualifications from leading regional infrastructure facilities, spending most of his foundational career designing programmatic baseline structures. Throughout his time advising open academic frameworks, he has facilitated multi-tier organizational strategy workshops focused entirely on building sustainable digital system platforms. His guidance remains highly central to our long-term structural alignment rules across our international operations networks. He coordinates heavily with external programmatic delegates to continuously review field data indicators while strengthening core platform integrity configurations." 
-            }
-        ];
+        // --- TEAM MATRIX ARRAY (Dormant placeholder profile removed permanently) ---
+        let teamData = [];
 
         let programsData = [
             { id: "PRG-201", title: "Global Public Health Framework", head: "Dr. Rachel Green", progress: "85%", kpi: "Improve clean water access", target: "95%" },
@@ -497,6 +489,28 @@
 
         let customMEColumns = [];
         let submissionHistory = [];
+
+        // --- LOCAL STORAGE STATE ENGINE ---
+        function loadSavedStateData() {
+            try {
+                if(localStorage.getItem("eivoms_team_store")) {
+                    teamData = JSON.parse(localStorage.getItem("eivoms_team_store"));
+                }
+                if(localStorage.getItem("eivoms_submissions_store")) {
+                    submissionHistory = JSON.parse(localStorage.getItem("eivoms_submissions_store"));
+                }
+            } catch (e) {
+                console.error("State recovery interrupted", e);
+            }
+        }
+
+        function commitTeamState() {
+            localStorage.setItem("eivoms_team_store", JSON.stringify(teamData));
+        }
+
+        function commitSubmissionsState() {
+            localStorage.setItem("eivoms_submissions_store", JSON.stringify(submissionHistory));
+        }
 
         function toggleLoginPassword() {
             const pw = document.getElementById('login-password');
@@ -678,7 +692,7 @@
             if (dropdown) { dropdown.value = email; }
         }
 
-        // --- MEET OUR DEDICATED TEAM WORKSPACE MODULE ---
+        // --- DEDICATED TEAM WORKSPACE MODULE (With Storage Preservation) ---
         function renderTeamWorkspace() {
             document.getElementById("dynamic-module-view").innerHTML = `
                 <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
@@ -818,8 +832,9 @@
                         image: e.target.result,
                         bio: bio
                     });
+                    commitTeamState();
                     renderTeamWorkspace();
-                    showToast(`Profile added successfully to the public display grid!`);
+                    showToast(`Profile added successfully to local storage display grid!`);
                     addSystemNotification("Team Management", `Published new ${role} profile: ${name}`);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
@@ -829,6 +844,7 @@
         function deleteTeamMember(index) {
             if(confirm("Are you sure you want to completely purge this team profile from the local platform registry?")) {
                 teamData.splice(index, 1);
+                commitTeamState();
                 renderTeamWorkspace();
                 showToast("Profile purged from registry arrays.");
             }
@@ -1088,11 +1104,11 @@
                 <div class="report-section shadow-sm mb-5">
                     <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
                         <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book text-success me-2"></i>9. Internal Registration Submissions Archive</h5>
-                        <button class="btn btn-outline-dark btn-xs px-2 py-1" onclick="executeSectionModification('submissions')">Refresh Records</button>
+                        <button class="btn btn-success btn-sm font-weight-bold shadow-sm" onclick="exportSubmissionsToExcel()"><i class="fa-solid fa-file-excel me-1"></i> Export Registration Excel (CSV)</button>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-sm table-bordered align-middle">
-                            <thead class="table-light small">
+                        <table class="table table-sm table-bordered align-middle" id="submissions-report-table">
+                            <thead class="table-dark small">
                                 <tr><th>Delegate Profile</th><th>Email Contact</th><th>Phone Number</th><th>Identity Gender</th></tr>
                             </thead>
                             <tbody>
@@ -1125,6 +1141,25 @@
             }, 500);
         }
 
+        function exportSubmissionsToExcel() {
+            if (submissionHistory.length === 0) {
+                alert("No submissions available to export.");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Full Name,Email,Phone,Gender\n";
+            submissionHistory.forEach(s => {
+                csvContent += `"${s.name}","${s.email}","${s.phone}","${s.gender}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const downloadAnchor = document.createElement("a");
+            downloadAnchor.setAttribute("href", encodedUri);
+            downloadAnchor.setAttribute("download", `Member_Registrations_${Date.now()}.csv`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            showToast("Registrations spreadsheet exported successfully.");
+        }
+
         function executeSectionModification(moduleKey) {
             try {
                 if (moduleKey === 'hr') {
@@ -1141,6 +1176,7 @@
                         m.role = document.getElementById(`rep-team-role-${i}`).innerText.trim();
                         m.bio = document.getElementById(`rep-team-bio-${i}`).innerText.trim();
                     });
+                    commitTeamState();
                 } else if (moduleKey === 'programs') {
                     programsData.forEach((p, i) => {
                         p.title = document.getElementById(`rep-prg-title-${i}`).innerText.trim();
@@ -1760,14 +1796,14 @@
             }
         }
 
-        // --- 9. MEMBER REGISTRATION / CONTACT FORM ---
+        // --- 9. MEMBER REGISTRATION / CONTACT FORM (With Session Recovery UI) ---
         function renderContactForm() {
             document.getElementById("dynamic-module-view").innerHTML = `
                 <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
                     <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book me-2 text-success"></i>Internal Member Registration</h3>
                 </div>
 
-                <div class="card border-0 shadow-sm bg-white p-4 mx-auto" style="max-width: 650px;">
+                <div class="card border-0 shadow-sm bg-white p-4 mx-auto mb-4" style="max-width: 650px;">
                     <form id="eivoms-contact-form" onsubmit="submitContactForm(event)">
                         <div class="row g-3 mb-3">
                             <div class="col-12 col-sm-6">
@@ -1808,6 +1844,22 @@
                         </div>
                     </form>
                 </div>
+
+                <div class="card border-0 shadow-sm bg-white p-4 mx-auto" style="max-width: 650px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0 text-dark">Local Submission Workspace</h5>
+                        <button class="btn btn-sm btn-dark" onclick="exportSubmissionsToExcel()"><i class="fa-solid fa-download me-1"></i> Excel Export</button>
+                    </div>
+                    <div class="table-responsive" style="max-height: 200px;">
+                        <table class="table table-sm table-striped">
+                            <thead><tr><th>Name</th><th>Email</th><th>Gender</th></tr></thead>
+                            <tbody id="quick-submission-tbody">
+                                ${submissionHistory.length === 0 ? `<tr><td colspan="3" class="text-center text-muted small">No entries yet inside session storage.</td></tr>` : 
+                                  submissionHistory.map(s => `<tr><td>${s.name}</td><td>${s.email}</td><td>${s.gender}</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             `;
         }
 
@@ -1820,9 +1872,10 @@
             const gender = document.getElementById("form-gender").value;
 
             submissionHistory.push({ name: `${first} ${last}`, email, phone, gender });
+            commitSubmissionsState();
             addSystemNotification("Member Directory", `Registered delegate: ${first} ${last}`);
-            showToast("Form submitted inside session. Complete details visible inside Real-Time Reports tab.");
-            document.getElementById("eivoms-contact-form").reset();
+            showToast("Form submitted. Entry successfully preserved in storage registers.");
+            renderContactForm();
         }
 
         // --- 10. SYSTEM ADMINISTRATION PANEL ---
@@ -1858,7 +1911,7 @@
         }
 
         function triggerDatabaseBackup() {
-            const packageData = { dashboard: dashboardStats, team: teamData, hr: hrData, programs: programsData, ledger: ledgerData, assets: assetData, vault: vaultData, vehicles: vehicleData, gallery: galleryData, timestamp: new Date().toISOString() };
+            const packageData = { dashboard: dashboardStats, team: teamData, hr: hrData, programs: programsData, ledger: ledgerData, assets: assetData, vault: vaultData, vehicles: vehicleData, gallery: galleryData, submissions: submissionHistory, timestamp: new Date().toISOString() };
             const fileString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData, null, 4));
             const downloader = document.createElement('a');
             downloader.setAttribute("href", fileString);
@@ -1964,61 +2017,11 @@
         }
 
         function exportToPDF() {
-            if (typeof html2pdf !== 'undefined') {
-                const reportElement = document.getElementById('report-workspace');
-                const configurationOptions = {
-                    margin:       0.5,
-                    filename:     `EIVOMS_Interactive_Report_${Date.now()}.pdf`,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true },
-                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
-                };
-                html2pdf().set(configurationOptions).from(reportElement).save();
-            } else {
-                showToast("Note: html2pdf package wrapper missing. Initializing fallback standard window layout stream.");
-                window.print();
-            }
-        }
-
-        function toggleShareModal(modalId) {
-            const targets = document.getElementById(`${modalId}-modal`);
-            if(targets) {
-                targets.classList.toggle('hidden');
-            }
-        }
-
-        function executeEmailShare(event) {
-            event.preventDefault();
-            const recipient = document.getElementById('share-recipient').value;
-            const notes = document.getElementById('share-message').value;
-            const extractedPayload = extractTableData();
-
-            const transferPayload = {
-                targetEmail: recipient,
-                annotations: notes,
-                generatedTimestamp: new Date().toISOString(),
-                dataset: extractedPayload
-            };
-
-            console.log("Transmission initialized to SMTP API Gateway Target:", transferPayload);
-            alert(`Success: Report metadata packaged and transmitted to ${recipient} via background mail transfer.`);
-            toggleShareModal('email');
-        }
-
-        function shareToCloud(ecosystemTarget) {
-            const currentStructure = extractTableData();
-            const manifestPayload = {
-                workspaceContext: "EARN Institute Inc. / EIVOMS Portal",
-                storageDestination: ecosystemTarget,
-                payloadMatrix: currentStructure,
-                executionEpoch: Date.now()
-            };
-
-            console.log(`Establishing context validation loop to target ecosystem [${ecosystemTarget}]:`, manifestPayload);
-            alert(`Authorization Request Routed: Dispatched structured matrix arrays directly to standard connection listeners inside ${ecosystemTarget}.`);
+            window.print();
         }
 
         window.addEventListener("DOMContentLoaded", () => {
+            loadSavedStateData();
             runTimestampService();
             updateNotificationUI();
             initializeLoginUI(); 
