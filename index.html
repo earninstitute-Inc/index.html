@@ -492,21 +492,48 @@
                 if(localStorage.getItem("eivoms_vehicle_store")) vehicleData = JSON.parse(localStorage.getItem("eivoms_vehicle_store"));
                 if(localStorage.getItem("eivoms_gallery_store")) galleryData = JSON.parse(localStorage.getItem("eivoms_gallery_store"));
                 if(localStorage.getItem("eivoms_submissions_store")) submissionHistory = JSON.parse(localStorage.getItem("eivoms_submissions_store"));
+                
+                // Perform a standard system recalculation on load to align any unsynced fallback indices
+                autoSyncDashboardMetrics(false);
             } catch (e) {
                 console.error("State engine initialization interrupted:", e);
             }
         }
 
+        // Central processing unit that calculates Dashboard counters based on actual items dynamically
+        function autoSyncDashboardMetrics(refreshDOM = true) {
+            dashboardStats.staffCount = hrData.length;
+            dashboardStats.ledgerRecords = ledgerData.length;
+            dashboardStats.activePrograms = programsData.length;
+            dashboardStats.vaultDocs = vaultData.length;
+            
+            localStorage.setItem("eivoms_dashboard_store", JSON.stringify(dashboardStats));
+            
+            if (refreshDOM && activeTabContext === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
         function commitDashboardState() { localStorage.setItem("eivoms_dashboard_store", JSON.stringify(dashboardStats)); }
-        function commitHRState() { localStorage.setItem("eivoms_hr_store", JSON.stringify(hrData)); }
+        function commitHRState() { 
+            localStorage.setItem("eivoms_hr_store", JSON.stringify(hrData)); 
+            autoSyncDashboardMetrics();
+        }
         function commitTeamState() { localStorage.setItem("eivoms_team_store", JSON.stringify(teamData)); }
         function commitProgramsState() { 
             localStorage.setItem("eivoms_programs_store", JSON.stringify(programsData)); 
             localStorage.setItem("eivoms_mecols_store", JSON.stringify(customMEColumns));
+            autoSyncDashboardMetrics();
         }
-        function commitLedgerState() { localStorage.setItem("eivoms_ledger_store", JSON.stringify(ledgerData)); }
+        function commitLedgerState() { 
+            localStorage.setItem("eivoms_ledger_store", JSON.stringify(ledgerData)); 
+            autoSyncDashboardMetrics();
+        }
         function commitAssetState() { localStorage.setItem("eivoms_asset_store", JSON.stringify(assetData)); }
-        function commitVaultState() { localStorage.setItem("eivoms_vault_store", JSON.stringify(vaultData)); }
+        function commitVaultState() { 
+            localStorage.setItem("eivoms_vault_store", JSON.stringify(vaultData)); 
+            autoSyncDashboardMetrics();
+        }
         function commitVehicleState() { localStorage.setItem("eivoms_vehicle_store", JSON.stringify(vehicleData)); }
         function commitGalleryState() { localStorage.setItem("eivoms_gallery_store", JSON.stringify(galleryData)); }
         function commitSubmissionsState() { localStorage.setItem("eivoms_submissions_store", JSON.stringify(submissionHistory)); }
@@ -1220,9 +1247,9 @@
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-chart-pie me-2 text-success"></i>Interactive Operations Dashboard</h3>
-                            <p class="text-muted m-0 small">Click directly into data cell elements to modify raw values.</p>
+                            <p class="text-muted m-0 small">Dashboard updates dynamically. Use relevant tabs to add or alter data points.</p>
                         </div>
-                        <button class="btn btn-warning btn-sm font-weight-bold" onclick="saveDashboardStats()"><i class="fa-solid fa-floppy-disk me-1"></i> Save Dashboard Edits</button>
+                        <button class="btn btn-warning btn-sm font-weight-bold" onclick="saveDashboardStats()"><i class="fa-solid fa-floppy-disk me-1"></i> Save Manual Override</button>
                     </div>
                 </div>
 
