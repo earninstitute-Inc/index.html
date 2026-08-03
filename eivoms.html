@@ -1,0 +1,2065 @@
+<meta name="google-site-verification" content="dEEKvapR3h1DeF-XpkBjSrPIg20XmzgrzAOS-aca2J8" />
+
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EIVOMS - EARN Institute Inc.</title>
+    
+    <!-- Bootstrap 5 CSS & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-green: #2E7D32;
+            --primary-green-hover: #1B5E20;
+            --dark-gray: #263238;
+            --dark-gray-light: #37474F;
+            --gold: #FBC02D;
+            --gold-hover: #F9A825;
+            --light-bg: #F4F6F7;
+            --card-shadow: 0 4px 20px 0 rgba(0,0,0,0.05);
+            --transition-speed: 0.25s;
+            --sidebar-width: 260px;
+            --font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--light-bg);
+            color: var(--dark-gray);
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+
+        /* --- Login Screen --- */
+        #login-screen {
+            background: linear-gradient(135deg, #1B5E20 0%, #263238 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1050;
+            transition: opacity var(--transition-speed) ease;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            color: #FFFFFF;
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 480px;
+        }
+
+        /* --- Side Navigation Drawer --- */
+        #app-layout {
+            display: none;
+            min-height: 100vh;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--dark-gray);
+            color: #FFFFFF;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            z-index: 100;
+            transition: all var(--transition-speed) ease-in-out;
+            overflow-y: auto;
+            border-right: 4px solid var(--gold);
+        }
+
+        #sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 12px 18px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease-in-out;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        #sidebar .nav-link:hover, #sidebar .nav-link.active {
+            color: #FFFFFF;
+            background-color: var(--dark-gray-light);
+            border-left-color: var(--gold);
+        }
+
+        #main-content {
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* --- Mobile Bottom Bar Styles --- */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background-color: #ffffff;
+            border-top: 1px solid #e0e0e0;
+            z-index: 1040;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #757575;
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 55px;
+            height: 100%;
+            border: none;
+            background: none;
+            cursor: pointer;
+        }
+
+        .mobile-nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary-green) !important;
+        }
+
+        .mobile-fab {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-green);
+            color: #ffffff !important;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(-15px);
+            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+            border: 4px solid #ffffff;
+        }
+        
+        .mobile-fab:active {
+            transform: translateY(-15px) scale(0.95);
+        }
+
+        /* --- UI Elements Styling --- */
+        .kpi-card {
+            border: none;
+            border-radius: 14px;
+            background: #FFFFFF;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .btn-earn-gold {
+            background-color: var(--gold);
+            color: var(--dark-gray);
+            font-weight: 700;
+            border: none;
+        }
+        .btn-earn-gold:hover {
+            background-color: var(--gold-hover);
+        }
+
+        #global-loader {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 1100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .dynamic-table th {
+            background-color: var(--dark-gray-light) !important;
+            color: #FFFFFF !important;
+        }
+
+        .editable-cell {
+            outline: none;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .editable-cell:focus {
+            background-color: rgba(251, 192, 45, 0.15) !important;
+            border: 1px solid var(--gold);
+        }
+
+        .gallery-card {
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+        }
+        .gallery-preview {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .sidebar-toggle-btn {
+            display: none;
+        }
+
+        .nav-link, .mobile-nav-item, button {
+            touch-action: manipulation;
+        }
+
+        .report-section {
+            border: 1px solid #dee2e6;
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 991.98px) {
+            #sidebar { left: -260px; }
+            #sidebar.show { left: 0; }
+            #main-content { 
+                margin-left: 0; 
+                padding-bottom: 95px;
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+            .sidebar-toggle-btn { display: inline-block; }
+            .mobile-bottom-nav { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="global-loader">
+        <div class="text-center">
+            <div class="spinner-border text-success" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
+            <h5 class="mt-3 fw-bold text-success text-uppercase" id="loader-title">EIVOMS Engine booting...</h5>
+            <span class="text-muted small" id="loader-status">Configuring secure domain credentials</span>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1090;">
+        <div id="appToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toast-message">Notification logged.</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <section id="login-screen">
+        <div class="glass-card p-4 p-md-5 text-center">
+            <div class="mb-4">
+                <div class="mx-auto bg-white rounded-circle d-flex align-items-center justify-content-center shadow-lg" style="width: 100px; height: 100px;">
+                    <i class="fa-solid fa-graduation-cap fa-3x text-success"></i>
+                </div>
+                <h3 class="mt-3 fw-extrabold text-white mb-0 text-uppercase">EARN Institute Inc.</h3>
+                <span class="text-warning small text-uppercase tracking-wider fw-bold">Enterprise Virtual Office Management System</span>
+            </div>
+
+            <form id="login-form">
+                <div class="form-floating mb-3 text-dark">
+                    <select class="form-select text-dark" id="login-email" required style="font-weight: 500;">
+                    </select>
+                    <label for="login-email" class="text-secondary fw-bold">Choose Your Job Title</label>
+                </div>
+                <div class="form-floating mb-3 text-dark position-relative">
+                    <input type="password" class="form-control" id="login-password" placeholder="Password" required autocomplete="current-password">
+                    <label for="login-password">Password</label>
+                    <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-decoration-none me-2 text-secondary" onclick="toggleLoginPassword()">
+                        <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
+                    </button>
+                </div>
+                <button type="submit" class="btn btn-earn-gold w-100 py-3 text-uppercase rounded-pill shadow mb-3">
+                    Authorize Entry <i class="fa-solid fa-shield-halved ms-2"></i>
+                </button>
+                <button type="button" class="btn btn-link text-white-50 btn-sm text-decoration-none" data-bs-toggle="modal" data-bs-target="#titleListModal">
+                    <i class="fa-solid fa-circle-info me-1"></i> View Allowed System Titles
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <div class="modal fade" id="titleListModal" tabindex="-1" aria-labelledby="titleListModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-dark">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="titleListModalLabel"><i class="fa-solid fa-user-shield text-warning me-2"></i>Authorized Logins (@earn.org)</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="list-group list-group-flush" id="modal-allowed-titles-list">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <span class="small text-muted w-100 text-center">Use authorized system password to access accounts.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SYSTEM CORE WORKSPACE -->
+    <div id="app-layout">
+        <nav id="sidebar">
+            <div class="p-3 text-center border-bottom border-secondary">
+                <i class="fa-solid fa-graduation-cap fa-2x text-warning mb-1"></i>
+                <h6 class="text-white mb-0 fw-bold" id="sidebar-user-title">EIVOMS Panel</h6>
+                <span class="text-warning small" id="sidebar-user-email">user@earn.org</span>
+            </div>
+            <div class="nav flex-column mt-2">
+                <a class="nav-link active" id="nav-dashboard" onclick="switchTab('dashboard')"><i class="fa-solid fa-chart-line"></i> Interactive Dashboard</a>
+                <a class="nav-link" id="nav-reports" onclick="switchTab('reports')"><i class="fa-solid fa-file-contract text-warning"></i> Real-Time Reports</a>
+                <a class="nav-link" id="nav-team" onclick="switchTab('team')"><i class="fa-solid fa-people-group"></i> Dedicated Team</a>
+                <a class="nav-link" id="nav-hr" onclick="switchTab('hr')"><i class="fa-solid fa-users-gear"></i> Human Resources</a>
+                <a class="nav-link" id="nav-programs" onclick="switchTab('programs')"><i class="fa-solid fa-laptop-file"></i> Programs & M&E</a>
+                <a class="nav-link" id="nav-ledger" onclick="switchTab('ledger')"><i class="fa-solid fa-file-invoice-dollar"></i> Financial Ledger</a>
+                <a class="nav-link" id="nav-assets" onclick="switchTab('assets')"><i class="fa-solid fa-boxes-stacked"></i> Inventory & Assets</a>
+                <a class="nav-link" id="nav-vault" onclick="switchTab('vault')"><i class="fa-solid fa-vault"></i> Document Vault</a>
+                <a class="nav-link" id="nav-vehicles" onclick="switchTab('vehicles')"><i class="fa-solid fa-car-side"></i> Fleet & Vehicles</a>
+                <a class="nav-link" id="nav-gallery" onclick="switchTab('gallery')"><i class="fa-solid fa-images"></i> Media Gallery</a>
+                <a class="nav-link" id="nav-contact" onclick="switchTab('contact')"><i class="fa-solid fa-address-book"></i> Member Registration</a>
+                <a class="nav-link" id="nav-admin" onclick="switchTab('admin')"><i class="fa-solid fa-gears"></i> Admin Core</a>
+                <hr class="text-secondary mx-3 my-2">
+                <a class="nav-link" onclick="performLogout()"><i class="fa-solid fa-right-from-bracket text-danger"></i> Sign Out</a>
+            </div>
+        </nav>
+
+        <main id="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap bg-white p-3 rounded shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-success sidebar-toggle-btn d-lg-none" onclick="toggleMobileSidebar()">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div>
+                        <span class="text-muted small">Local Node Clock</span>
+                        <h5 class="m-0 fw-bold text-success" id="live-timestamp">Synchronizing...</h5>
+                    </div>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary position-relative dropdown-toggle" type="button" id="notificationMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-bell text-success"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notification-count">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end p-3 shadow" style="width: 320px;" id="notification-dropdown"></div>
+                </div>
+            </div>
+
+            <!-- Contextual views inject dynamically below -->
+            <div id="dynamic-module-view"></div>
+        </main>
+
+        <!-- RESPONSIVE MOBILE BOTTOM NAVIGATION BAR -->
+        <nav class="mobile-bottom-nav">
+            <button class="mobile-nav-item active" id="m-nav-dashboard" onclick="switchTab('dashboard')">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dash</span>
+            </button>
+            <button class="mobile-nav-item" id="m-nav-reports" onclick="switchTab('reports')">
+                <i class="fa-solid fa-file-contract text-warning"></i>
+                <span>Reports</span>
+            </button>
+            <button class="mobile-nav-item mobile-fab" onclick="handleMobileUniversalAction()">
+                <i class="fa-solid fa-plus text-white"></i>
+            </button>
+            <button class="mobile-nav-item" id="m-nav-hr" onclick="switchTab('hr')">
+                <i class="fa-solid fa-users-gear"></i>
+                <span>HR</span>
+            </button>
+            <div class="dropup d-flex align-items-center justify-content-center">
+                <button class="mobile-nav-item dropdown-toggle" type="button" id="mobileMoreMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-ellipsis"></i>
+                    <span>More</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="mobileMoreMenu">
+                    <li><a class="dropdown-item py-2" onclick="switchTab('team')"><i class="fa-solid fa-people-group me-2 text-success"></i> Dedicated Team</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('programs')"><i class="fa-solid fa-laptop-file me-2 text-success"></i> Programs & M&E</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('ledger')"><i class="fa-solid fa-file-invoice-dollar me-2 text-success"></i> Financial Ledger</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('assets')"><i class="fa-solid fa-boxes-stacked text-success"></i> Assets & Inventory</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('vault')"><i class="fa-solid fa-vault me-2 text-success"></i> Document Vault</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('vehicles')"><i class="fa-solid fa-car-side me-2 text-warning"></i> Fleet & Vehicles</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('gallery')"><i class="fa-solid fa-images me-2 text-success"></i> Media Gallery</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('contact')"><i class="fa-solid fa-address-book me-2 text-success"></i> Registration</a></li>
+                    <li><a class="dropdown-item py-2" onclick="switchTab('admin')"><i class="fa-solid fa-gears me-2 text-dark"></i> Admin Core</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger py-2" onclick="performLogout()"><i class="fa-solid fa-right-from-bracket me-2"></i> Sign Out</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const sys = {
+            orgName: "EARN Institute Inc.",
+            buildVersion: "2.3.0-Data Optimization"
+        };
+
+        const authorizedUsers = [
+            { id: "boardchair", rawTitle: "Board Chair", email: "boardchair@earn.org" },
+            { id: "director", rawTitle: "Director", email: "director@earn.org" },
+            { id: "executivedirector", rawTitle: "Executive Director", email: "executivedirector@earn.org" },
+            { id: "hrmanager", rawTitle: "HR Manager", email: "hrmanager@earn.org" },
+            { id: "procurementmanager", rawTitle: "Procurement Manager", email: "procurementmanager@earn.org" },
+            { id: "programmanager", rawTitle: "Program Manager", email: "programmanager@earn.org" },
+            { id: "memanager", rawTitle: "M&E Manager", email: "memanager@earn.org" },
+            { id: "communicationmanager", rawTitle: "Communication Manager", email: "communicationmanager@earn.org" },
+            { id: "itmanager", rawTitle: "IT Manager", email: "itmanager@earn.org" },
+            { id: "officer", rawTitle: "Officer", email: "officer@earn.org" },
+            { id: "assistant", rawTitle: "Assistant", email: "assistant@earn.org" }
+        ];
+
+        let activeTabContext = "dashboard";
+
+        // --- GLOBAL ARRAYS WITH MOCK FALLBACKS ---
+        let dashboardStats = { staffCount: 12, ledgerRecords: 24, activePrograms: 6, vaultDocs: 18 };
+        let hrData = [
+            { id: "EMP-01", name: "Sarah Jenkins", role: "Dean of Studies", dept: "Academics", status: "Active" },
+            { id: "EMP-02", name: "Albert Cole", role: "Financial Controller", dept: "Finance", status: "Active" }
+        ];
+        let teamData = [];
+        let programsData = [
+            { id: "PRG-201", title: "Global Public Health Framework", head: "Dr. Rachel Green", progress: "85%", kpi: "Improve clean water access", target: "95%" },
+            { id: "PRG-202", title: "Enterprise Systems Dev", head: "Eng. Davis", progress: "40%", kpi: "Acode platform testing cycles", target: "100%" }
+        ];
+        let ledgerData = [
+            { ref: "TX-9041", desc: "Local Server Grid Renewal", type: "Expense", amount: "$1,240.00", status: "Approved" },
+            { ref: "TX-9042", desc: "Grant Allocation Tranche B", type: "Income", amount: "$18,500.00", status: "Completed" }
+        ];
+        let assetData = [
+            { id: 101, name: "Lenovo ThinkPad Laptop", location: "Main Lab", status: "Allocated", owner: "Dept. Head" },
+            { id: 102, name: "Epson Projector H200", location: "Conference Hall A", status: "Available", owner: "Facility Admin" }
+        ];
+        let vaultData = [
+            { docId: "DOC-90", name: "Institutional Policy Master", format: "PDF", size: "2.4 MB", content: "data:text/plain;charset=utf-8,Mock PDF Content Document" },
+            { docId: "DOC-91", name: "Annual Financial Statement 2025", format: "XLSX", size: "14.1 MB", content: "data:text/plain;charset=utf-8,Mock Excel Content Sheet" }
+        ];
+        let vehicleData = [
+            { plate: "EARN-882", model: "Toyota Hiace Van", driver: "Driver John", status: "Active Transit" },
+            { plate: "EARN-104", model: "Mitsubishi L300", driver: "Driver Mark", status: "In Maintenance" }
+        ];
+        let galleryData = [
+            { id: 1, name: "EARN Campus Building.jpg", type: "image", src: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80" },
+            { id: 2, name: "Sample Structural Guide.mp4", type: "video", src: "https://www.w3schools.com/html/mov_bbb.mp4" }
+        ];
+        let customMEColumns = [];
+        let submissionHistory = [];
+
+        // --- STORAGE SYNCHRONIZATION ENGINE ---
+        function loadSavedStateData() {
+            try {
+                if(localStorage.getItem("eivoms_dashboard_store")) dashboardStats = JSON.parse(localStorage.getItem("eivoms_dashboard_store"));
+                if(localStorage.getItem("eivoms_hr_store")) hrData = JSON.parse(localStorage.getItem("eivoms_hr_store"));
+                if(localStorage.getItem("eivoms_team_store")) teamData = JSON.parse(localStorage.getItem("eivoms_team_store"));
+                if(localStorage.getItem("eivoms_programs_store")) programsData = JSON.parse(localStorage.getItem("eivoms_programs_store"));
+                if(localStorage.getItem("eivoms_mecols_store")) customMEColumns = JSON.parse(localStorage.getItem("eivoms_mecols_store"));
+                if(localStorage.getItem("eivoms_ledger_store")) ledgerData = JSON.parse(localStorage.getItem("eivoms_ledger_store"));
+                if(localStorage.getItem("eivoms_asset_store")) assetData = JSON.parse(localStorage.getItem("eivoms_asset_store"));
+                if(localStorage.getItem("eivoms_vault_store")) vaultData = JSON.parse(localStorage.getItem("eivoms_vault_store"));
+                if(localStorage.getItem("eivoms_vehicle_store")) vehicleData = JSON.parse(localStorage.getItem("eivoms_vehicle_store"));
+                if(localStorage.getItem("eivoms_gallery_store")) galleryData = JSON.parse(localStorage.getItem("eivoms_gallery_store"));
+                if(localStorage.getItem("eivoms_submissions_store")) submissionHistory = JSON.parse(localStorage.getItem("eivoms_submissions_store"));
+                
+                autoSyncDashboardMetrics(false);
+            } catch (e) {
+                console.error("State engine initialization interrupted:", e);
+            }
+        }
+
+        function autoSyncDashboardMetrics(refreshDOM = true) {
+            dashboardStats.staffCount = hrData.length;
+            dashboardStats.ledgerRecords = ledgerData.length;
+            dashboardStats.activePrograms = programsData.length;
+            dashboardStats.vaultDocs = vaultData.length;
+            
+            localStorage.setItem("eivoms_dashboard_store", JSON.stringify(dashboardStats));
+            
+            if (refreshDOM && activeTabContext === 'dashboard') {
+                renderDashboard();
+            }
+        }
+
+        function commitDashboardState() { localStorage.setItem("eivoms_dashboard_store", JSON.stringify(dashboardStats)); }
+        function commitHRState() { 
+            localStorage.setItem("eivoms_hr_store", JSON.stringify(hrData)); 
+            autoSyncDashboardMetrics();
+        }
+        function commitTeamState() { localStorage.setItem("eivoms_team_store", JSON.stringify(teamData)); }
+        function commitProgramsState() { 
+            localStorage.setItem("eivoms_programs_store", JSON.stringify(programsData)); 
+            localStorage.setItem("eivoms_mecols_store", JSON.stringify(customMEColumns));
+            autoSyncDashboardMetrics();
+        }
+        function commitLedgerState() { 
+            localStorage.setItem("eivoms_ledger_store", JSON.stringify(ledgerData)); 
+            autoSyncDashboardMetrics();
+        }
+        function commitAssetState() { localStorage.setItem("eivoms_asset_store", JSON.stringify(assetData)); }
+        function commitVaultState() { 
+            localStorage.setItem("eivoms_vault_store", JSON.stringify(vaultData)); 
+            autoSyncDashboardMetrics();
+        }
+        function commitVehicleState() { localStorage.setItem("eivoms_vehicle_store", JSON.stringify(vehicleData)); }
+        function commitGalleryState() { localStorage.setItem("eivoms_gallery_store", JSON.stringify(galleryData)); }
+        function commitSubmissionsState() { localStorage.setItem("eivoms_submissions_store", JSON.stringify(submissionHistory)); }
+
+        function toggleLoginPassword() {
+            const pw = document.getElementById('login-password');
+            const icon = document.getElementById('password-toggle-icon');
+            if (pw.type === 'password') {
+                pw.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                pw.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        function toggleMobileSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        function triggerLoader(duration = 600) {
+            const loader = document.getElementById('global-loader');
+            if (!loader) return;
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => { loader.style.display = 'none'; }, 300);
+            }, duration);
+        }
+
+        function switchTab(tabId) {
+            activeTabContext = tabId;
+            document.getElementById('sidebar').classList.remove('show');
+            
+            document.querySelectorAll('#sidebar .nav-link').forEach(link => link.classList.remove('active'));
+            const activeLink = document.getElementById(`nav-${tabId}`);
+            if (activeLink) activeLink.classList.add('active');
+
+            document.querySelectorAll('.mobile-nav-item').forEach(btn => btn.classList.remove('active'));
+            const mobileActiveBtn = document.getElementById(`m-nav-${tabId}`);
+            if (mobileActiveBtn) {
+                mobileActiveBtn.classList.add('active');
+            } else {
+                const moreMenuBtn = document.getElementById('mobileMoreMenu');
+                if (moreMenuBtn) moreMenuBtn.classList.add('active');
+            }
+
+            switch (tabId) {
+                case 'dashboard': renderDashboard(); break;
+                case 'reports': renderLiveReports(); break;
+                case 'team': renderTeamWorkspace(); break;
+                case 'hr': renderHR(); break;
+                case 'programs': renderPrograms(); break;
+                case 'ledger': renderLedger(); break;
+                case 'assets': renderAssets(); break;
+                case 'vault': renderVault(); break;
+                case 'vehicles': renderVehicles(); break;
+                case 'gallery': renderGallery(); break;
+                case 'contact': renderContactForm(); break;
+                case 'admin': renderAdminPanel(); break;
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleMobileUniversalAction() {
+            if(activeTabContext === 'reports' || activeTabContext === 'team') {
+                runGlobalReportRefresh();
+            } else if(activeTabContext === 'dashboard') {
+                showToast("Tip: Access the Reports tab to compile system layouts.");
+            } else if(activeTabContext === 'hr') {
+                addNewStaff();
+            } else if(activeTabContext === 'programs') {
+                addNewProgram();
+            } else if(activeTabContext === 'ledger') {
+                addNewLedger();
+            } else if(activeTabContext === 'assets') {
+                addNewAsset();
+            } else if(activeTabContext === 'vehicles') {
+                addNewVehicle();
+            } else {
+                showToast(`Current workspace context: ${activeTabContext.toUpperCase()}`);
+            }
+        }
+
+        // --- SESSION LOGIC ---
+        const Session = {
+            login: function() {
+                const selectedEmail = document.getElementById("login-email").value;
+                const passwordInput = document.getElementById("login-password").value;
+
+                if (!selectedEmail) {
+                    alert("Please select a valid job title to log in.");
+                    return;
+                }
+                if (!passwordInput) {
+                    alert("Authorization Refused: Password required.");
+                    return;
+                }
+
+                const matchingUser = authorizedUsers.find(user => user.email === selectedEmail);
+                if (!matchingUser) {
+                    alert("Access Denied: Selected title is not recognized.");
+                    return;
+                }
+
+                triggerLoader(800);
+                setTimeout(() => {
+                    localStorage.setItem("eivoms_session", "active");
+                    localStorage.setItem("eivoms_user_title", matchingUser.rawTitle);
+                    localStorage.setItem("eivoms_user_email", matchingUser.email);
+
+                    document.getElementById("sidebar-user-title").innerText = matchingUser.rawTitle;
+                    document.getElementById("sidebar-user-email").innerText = matchingUser.email;
+
+                    document.getElementById("login-screen").style.display = 'none';
+                    document.getElementById("app-layout").style.display = 'block';
+                    
+                    switchTab('dashboard');
+                    addSystemNotification("Security Engine", `Admin profile loaded: ${matchingUser.rawTitle}`);
+                }, 800);
+            },
+            logout: function() {
+                localStorage.removeItem("eivoms_session");
+                localStorage.removeItem("eivoms_user_title");
+                localStorage.removeItem("eivoms_user_email");
+                triggerLoader(400);
+                setTimeout(() => {
+                    document.getElementById("app-layout").style.display = 'none';
+                    document.getElementById("login-screen").style.display = 'flex';
+                    document.getElementById("login-password").value = "";
+                    document.getElementById("login-email").selectedIndex = 0;
+                }, 400);
+            },
+            checkAuth: function() {
+                if (localStorage.getItem("eivoms_session") === "active") {
+                    const savedTitle = localStorage.getItem("eivoms_user_title") || "Administrator";
+                    const savedEmail = localStorage.getItem("eivoms_user_email") || "user@earn.org";
+
+                    document.getElementById("sidebar-user-title").innerText = savedTitle;
+                    document.getElementById("sidebar-user-email").innerText = savedEmail;
+
+                    document.getElementById("login-screen").style.display = 'none';
+                    document.getElementById("app-layout").style.display = 'block';
+                    switchTab('dashboard');
+                }
+            }
+        };
+
+        function initializeLoginUI() {
+            const dropdown = document.getElementById("login-email");
+            const listContainer = document.getElementById("modal-allowed-titles-list");
+            
+            if (dropdown) {
+                dropdown.innerHTML = `
+                    <option value="" disabled selected>-- Click to Choose Your Title --</option>
+                    ${authorizedUsers.map(user => `
+                        <option value="${user.email}">${user.rawTitle} (${user.email})</option>
+                    `).join('')}
+                `;
+            }
+
+            if (listContainer) {
+                listContainer.innerHTML = authorizedUsers.map(user => `
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0 fw-bold text-success">${user.rawTitle}</h6>
+                            <span class="text-muted small">${user.email}</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-dark" onclick="copyLoginDetails('${user.email}')">Copy ID</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function copyLoginDetails(email) {
+            navigator.clipboard.writeText(email);
+            showToast(`Copied ${email} to clipboard!`);
+            const dropdown = document.getElementById("login-email");
+            if (dropdown) { dropdown.value = email; }
+        }
+
+        // --- DEDICATED TEAM WORKSPACE MODULE ---
+        function renderTeamWorkspace() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group me-2 text-success"></i>Team Profile Matrix</h3>
+                            <p class="text-muted m-0 small">Publish and manage biological data profiles for staff, board members, and partners.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-4 rounded-3 shadow-sm mb-5">
+                    <h3 class="text-center fw-bold text-primary mb-4 text-uppercase tracking-wide">Meet Our Dedicated Team</h3>
+                    <div class="row g-4 justify-content-center" id="teamDisplayGrid">
+                        ${teamData.map((member, index) => `
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card h-100 border-0 shadow-sm overflow-hidden" style="border: 1px solid #e0e0e0; border-radius: 12px;">
+                                    <div class="text-center pt-4" style="width: 100%; height: 160px; background-color: #f4f4f4; overflow: hidden; position: relative;">
+                                        <img src="${member.image}" alt="${member.name}" class="rounded-circle img-thumbnail" style="width: 120px; height: 120px; object-fit: cover;">
+                                    </div>
+                                    <div class="card-body d-flex flex-column p-4 text-center">
+                                        <h5 class="fw-bold text-dark mb-1">${member.name}</h5>
+                                        <div class="mb-3">
+                                            <span class="badge bg-secondary" style="font-weight: 600; font-size: 0.8rem; padding: 5px 10px;">${member.role}</span>
+                                            <span class="text-secondary small fw-bold ms-2">Age: ${member.age || 'N/A'}</span>
+                                        </div>
+                                        <p class="card-text text-muted small lh-base text-justify" style="white-space: pre-line; max-height: 150px; overflow-y: auto; padding-right: 5px;">
+                                            ${member.bio}
+                                        </p>
+                                        <div class="mt-auto pt-3 border-top text-end">
+                                            <button class="btn btn-xs btn-outline-danger py-1 px-2" onclick="deleteTeamMember(${index})">
+                                                <i class="fa-solid fa-trash-can me-1"></i> Remove Profile
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                        ${teamData.length === 0 ? `<div class="col-12 text-center text-muted py-5"><p>No team members published yet.</p></div>` : ''}
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white mx-auto p-4 p-md-5" style="max-width: 750px; border-radius: 16px;">
+                    <div class="text-center mb-4 border-bottom pb-3">
+                        <h4 class="fw-bold text-success m-0"><i class="fa-solid fa-cloud-arrow-up me-2"></i>Upload Team & Partner Information</h4>
+                        <p class="text-muted small m-0 mt-1">Populate profiles directly to the localized organization registry loops.</p>
+                    </div>
+
+                    <form id="teamUploadForm" onsubmit="submitTeamMemberForm(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-8">
+                                <label for="memberName" class="form-label small fw-bold text-secondary">Full Name</label>
+                                <input type="text" id="memberName" class="form-control" placeholder="e.g., Prof. Sarah Cole" required style="padding: 10px;">
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <label for="memberAge" class="form-label small fw-bold text-secondary">Age</label>
+                                <input type="number" id="memberAge" class="form-control" placeholder="45" required style="padding: 10px;">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label for="memberRole" class="form-label small fw-bold text-secondary">Organizational Role</label>
+                                <select id="memberRole" class="form-select" required style="padding: 10px;">
+                                    <option value="" disabled selected>Select a role...</option>
+                                    <option value="Board Chair">Board Chair</option>
+                                    <option value="Board Member">Board Member</option>
+                                    <option value="Executive Director">Executive Director</option>
+                                    <option value="Human Resource Manager">Human Resource Manager</option>
+                                    <option value="Programs Manager">Programs Manager</option>
+                                    <option value="Procurement Manager">Procurement Manager</option>
+                                    <option value="M&E Manager">M&E Manager</option>
+                                    <option value="Communication Manager">Communication Manager</option>
+                                    <option value="Logistics Manager">Logistics Manager</option>
+                                    <option value="Field Officer">Field Officer</option>
+                                    <option value="Support Staff">Support Staff</option>
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="memberImage" class="form-label small fw-bold text-secondary">Profile Image File</label>
+                                <input type="file" id="memberImage" class="form-control" accept="image/*" style="padding: 9px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label for="memberBio" class="form-label small fw-bold text-secondary m-0">Short Bio</label>
+                                <span class="badge bg-dark text-white shadow-sm" id="bioWordCounter">0 Words</span>
+                            </div>
+                            <textarea id="memberBio" class="form-control" rows="6" placeholder="Provide details regarding qualifications..." required style="resize: vertical; font-size: 0.95rem;" oninput="executeLiveBioWordCount()"></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-extrabold border-2 text-uppercase" style="font-weight: 800; color: #1B5E20; border-color: #1B5E20; background: #ffffff;">
+                                Upload to Team <i class="fa-solid fa-user-plus ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function executeLiveBioWordCount() {
+            const field = document.getElementById('memberBio');
+            const counter = document.getElementById('bioWordCounter');
+            if(!field || !counter) return;
+            const content = field.value.trim();
+            const calculatedWords = content === "" ? 0 : content.split(/\s+/).filter(w => w.length > 0).length;
+            counter.innerText = `${calculatedWords} Words`;
+        }
+
+        function submitTeamMemberForm(event) {
+            event.preventDefault();
+            const name = document.getElementById('memberName').value.trim();
+            const age = document.getElementById('memberAge').value;
+            const role = document.getElementById('memberRole').value;
+            const bio = document.getElementById('memberBio').value.trim();
+            const fileInput = document.getElementById('memberImage');
+
+            const insertMember = (imgSrc) => {
+                teamData.push({
+                    id: `TEAM-0${teamData.length + 1}`,
+                    name, age: parseInt(age), role, image: imgSrc, bio
+                });
+                commitTeamState();
+                renderTeamWorkspace();
+                showToast(`Profile published completely.`);
+            };
+
+            if(fileInput.files && fileInput.files[0]) {
+                triggerLoader(600);
+                const reader = new FileReader();
+                reader.onload = function(e) { insertMember(e.target.result); };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                insertMember('https://via.placeholder.com/150');
+            }
+        }
+
+        function deleteTeamMember(index) {
+            if(confirm("Purge this team profile?")) {
+                teamData.splice(index, 1);
+                commitTeamState();
+                renderTeamWorkspace();
+                showToast("Profile wiped from registry registers.");
+            }
+        }
+
+        // --- REAL-TIME LIVE MASTER REPORTS COMPONENT ---
+        function renderLiveReports() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-warning">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-contract me-2 text-warning"></i>Real-Time System Reporting Workspace</h3>
+                            <p class="text-muted m-0 small" id="report-timestamp">Aggregates layout matrices from all operational modules instantly.</p>
+                        </div>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-primary btn-sm font-weight-bold" onclick="exportToCSV()"><i class="fa-solid fa-file-csv me-1"></i> Export CSV</button>
+                            <button class="btn btn-info btn-sm text-white font-weight-bold" onclick="exportToPDF()"><i class="fa-solid fa-file-pdf me-1"></i> Export PDF</button>
+                            <button class="btn btn-success btn-sm font-weight-bold" onclick="runGlobalReportRefresh()"><i class="fa-solid fa-rotate me-1"></i> Sync & Refresh Reports</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4" id="report-workspace">
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-primary">
+                            <span class="text-muted small d-block">HR Roster Count</span>
+                            <h4 class="fw-bold m-0 text-primary" id="rep-cnt-hr">${hrData.length}</h4>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-info">
+                            <span class="text-muted small d-block">Team Registry Profiles</span>
+                            <h4 class="fw-bold m-0 text-info" id="rep-cnt-team">${teamData.length}</h4>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-success">
+                            <span class="text-muted small d-block">Evaluations Logged</span>
+                            <h4 class="fw-bold m-0 text-success" id="rep-cnt-prg">${programsData.length}</h4>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="p-3 bg-white rounded shadow-sm text-center border-start border-3 border-danger">
+                            <span class="text-muted small d-block">Vault Inventories</span>
+                            <h4 class="fw-bold m-0 text-danger" id="rep-cnt-vlt">${vaultData.length}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1. Human Resources Report -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-users-gear text-primary me-2"></i>1. Human Resources Ledger Block</h5>
+                        <button class="btn btn-outline-primary btn-xs px-2 py-1" onclick="executeSectionModification('hr')">Commit HR Structural Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle" id="report-table-hr">
+                            <thead class="table-light small">
+                                <tr><th>Staff Code</th><th>Full Identity</th><th>Assigned Title</th><th>Deployment Unit</th><th>Operating State</th></tr>
+                            </thead>
+                            <tbody>
+                                ${hrData.map((emp, i) => `
+                                    <tr>
+                                        <td><strong>${emp.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-hr-name-${i}">${emp.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-hr-role-${i}">${emp.role}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-hr-dept-${i}">${emp.dept}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-hr-status-${i}">${emp.status}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 2. Dedicated Team Matrix -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-people-group text-info me-2"></i>2. Dedicated Team & Partner Profiles Matrix</h5>
+                        <button class="btn btn-outline-info btn-xs px-2 py-1" onclick="executeSectionModification('team')">Commit Team Structural Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Team ID</th><th>Full Identity</th><th>Age</th><th>Role</th><th>Biography</th></tr>
+                            </thead>
+                            <tbody>
+                                ${teamData.map((m, i) => `
+                                    <tr>
+                                        <td><strong>${m.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-name-${i}">${m.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-age-${i}">${m.age}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-role-${i}">${m.role}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-team-bio-${i}" style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.bio}</td>
+                                    </tr>
+                                `).join('')}
+                                ${teamData.length === 0 ? `<tr><td colspan="5" class="text-center text-muted small py-2">No team profiles active.</td></tr>` : ''}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. Integrated Programs Report -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file text-success me-2"></i>3. Program & M&E Performance Indices</h5>
+                        <button class="btn btn-outline-success btn-xs px-2 py-1" onclick="executeSectionModification('programs')">Commit M&E Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Ref ID</th><th>Project Scope Title</th><th>Lead Investigator</th><th>Completion</th><th>Strategic M&E KPI Target</th></tr>
+                            </thead>
+                            <tbody>
+                                ${programsData.map((p, i) => `
+                                    <tr>
+                                        <td><strong>${p.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-prg-title-${i}">${p.title}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-prg-head-${i}">${p.head}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-prg-progress-${i}">${p.progress}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-prg-kpi-${i}">${p.kpi} (${p.target})</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 4. Financial Ledger Report -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar text-danger me-2"></i>4. Financial Ledger Statements</h5>
+                        <button class="btn btn-outline-danger btn-xs px-2 py-1" onclick="executeSectionModification('ledger')">Commit Transaction Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Reference</th><th>Description</th><th>Type</th><th>Value</th><th>Audit Status</th></tr>
+                            </thead>
+                            <tbody>
+                                ${ledgerData.map((item, i) => `
+                                    <tr>
+                                        <td><strong>${item.ref}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-led-desc-${i}">${item.desc}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-led-type-${i}">${item.type}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-led-amount-${i}">${item.amount}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-led-status-${i}">${item.status}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5. Inventory & Asset Management -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked text-secondary me-2"></i>5. Inventory & Capital Asset Roster</h5>
+                        <button class="btn btn-outline-secondary btn-xs px-2 py-1" onclick="executeSectionModification('assets')">Commit Asset Shifts</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Asset Key</th><th>Equipment Descriptor</th><th>Allocation</th><th>State</th><th>Primary Holder</th></tr>
+                            </thead>
+                            <tbody>
+                                ${assetData.map((ast, i) => `
+                                    <tr>
+                                        <td><strong>#${ast.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-ast-name-${i}">${ast.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-ast-loc-${i}">${ast.location}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-ast-status-${i}">${ast.status}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-ast-owner-${i}">${ast.owner}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 6. Document Vault -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault text-info me-2"></i>6. Secured Vault File Registry</h5>
+                        <button class="btn btn-outline-info btn-xs px-2 py-1" onclick="executeSectionModification('vault')">Commit Document Indexes</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Document Token</th><th>Filename Handle</th><th>Type File</th><th>Size Alloc</th></tr>
+                            </thead>
+                            <tbody>
+                                ${vaultData.map((v, i) => `
+                                    <tr>
+                                        <td><strong>${v.docId}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-vlt-name-${i}">${v.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-vlt-format-${i}">${v.format}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-vlt-size-${i}">${v.size}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 7. Fleet Telemetry -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side text-warning me-2"></i>7. Logistical Fleet Manifest</h5>
+                        <button class="btn btn-outline-warning btn-xs px-2 py-1" onclick="executeSectionModification('vehicles')">Commit Fleet Telemetry</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Plate Number</th><th>Vehicle Chassis Model</th><th>Assigned Chauffeur</th><th>Deployment State</th></tr>
+                            </thead>
+                            <tbody>
+                                ${vehicleData.map((v, i) => `
+                                    <tr>
+                                        <td><strong>${v.plate}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-veh-model-${i}">${v.model}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-veh-driver-${i}">${v.driver}</td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-veh-status-${i}">${v.status}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 8. Media Gallery Inventory -->
+                <div class="report-section shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-images text-success me-2"></i>8. Compiled Graphic Attachments</h5>
+                        <button class="btn btn-outline-success btn-xs px-2 py-1" onclick="executeSectionModification('gallery')">Commit Asset Filenames</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle">
+                            <thead class="table-light small">
+                                <tr><th>Asset Core ID</th><th>Filename Label Reference</th><th>Media Format Category</th></tr>
+                            </thead>
+                            <tbody>
+                                ${galleryData.map((g, i) => `
+                                    <tr>
+                                        <td><strong>#${g.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="rep-gal-name-${i}">${g.name}</td>
+                                        <td><span class="badge bg-dark text-uppercase">${g.type}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 9. Registration Forms Submission Registry -->
+                <div class="report-section shadow-sm mb-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book text-success me-2"></i>9. Internal Registration Submissions Archive</h5>
+                        <button class="btn btn-success btn-sm font-weight-bold shadow-sm" onclick="exportSubmissionsToExcel()"><i class="fa-solid fa-file-excel me-1"></i> Export Registration Excel (CSV)</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-bordered align-middle" id="submissions-report-table">
+                            <thead class="table-dark small">
+                                <tr><th>Delegate Profile</th><th>Email Contact</th><th>Phone Number</th><th>Identity Gender</th></tr>
+                            </thead>
+                            <tbody>
+                                ${submissionHistory.length === 0 ? `<tr><td colspan="4" class="text-center text-muted small py-3">No active member forms inside current storage loop.</td></tr>` : 
+                                  submissionHistory.map((sub) => `
+                                    <tr>
+                                        <td><strong>${sub.name}</strong></td>
+                                        <td>${sub.email}</td>
+                                        <td>${sub.phone}</td>
+                                        <td><span class="badge bg-secondary">${sub.gender}</span></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            const timestampEl = document.getElementById('report-timestamp');
+            if (timestampEl) {
+                timestampEl.innerText = `Generated Matrix Layout Node: ${new Date().toLocaleString()}`;
+            }
+        }
+
+        function runGlobalReportRefresh() {
+            triggerLoader(500);
+            setTimeout(() => {
+                renderLiveReports();
+                showToast("Aggregated report modules synchronized completely.");
+            }, 500);
+        }
+
+        function exportSubmissionsToExcel() {
+            if (submissionHistory.length === 0) {
+                alert("No submissions available to export.");
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Full Name,Email,Phone,Gender\n";
+            submissionHistory.forEach(s => {
+                csvContent += `"${s.name}","${s.email}","${s.phone}","${s.gender}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const downloadAnchor = document.createElement("a");
+            downloadAnchor.setAttribute("href", encodedUri);
+            downloadAnchor.setAttribute("download", `Member_Registrations_${Date.now()}.csv`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            showToast("Registrations spreadsheet generated.");
+        }
+
+        function executeSectionModification(moduleKey) {
+            try {
+                if (moduleKey === 'hr') {
+                    hrData.forEach((emp, i) => {
+                        emp.name = document.getElementById(`rep-hr-name-${i}`).innerText.trim();
+                        emp.role = document.getElementById(`rep-hr-role-${i}`).innerText.trim();
+                        emp.dept = document.getElementById(`rep-hr-dept-${i}`).innerText.trim();
+                        emp.status = document.getElementById(`rep-hr-status-${i}`).innerText.trim();
+                    });
+                    commitHRState();
+                } else if (moduleKey === 'team') {
+                    teamData.forEach((m, i) => {
+                        m.name = document.getElementById(`rep-team-name-${i}`).innerText.trim();
+                        m.age = parseInt(document.getElementById(`rep-team-age-${i}`).innerText.trim()) || m.age;
+                        m.role = document.getElementById(`rep-team-role-${i}`).innerText.trim();
+                    });
+                    commitTeamState();
+                } else if (moduleKey === 'programs') {
+                    programsData.forEach((p, i) => {
+                        p.title = document.getElementById(`rep-prg-title-${i}`).innerText.trim();
+                        p.head = document.getElementById(`rep-prg-head-${i}`).innerText.trim();
+                        p.progress = document.getElementById(`rep-prg-progress-${i}`).innerText.trim();
+                    });
+                    commitProgramsState();
+                } else if (moduleKey === 'ledger') {
+                    ledgerData.forEach((item, i) => {
+                        item.desc = document.getElementById(`rep-led-desc-${i}`).innerText.trim();
+                        item.type = document.getElementById(`rep-led-type-${i}`).innerText.trim();
+                        item.amount = document.getElementById(`rep-led-amount-${i}`).innerText.trim();
+                        item.status = document.getElementById(`rep-led-status-${i}`).innerText.trim();
+                    });
+                    commitLedgerState();
+                } else if (moduleKey === 'assets') {
+                    assetData.forEach((ast, i) => {
+                        ast.name = document.getElementById(`rep-ast-name-${i}`).innerText.trim();
+                        ast.location = document.getElementById(`rep-ast-loc-${i}`).innerText.trim();
+                        ast.status = document.getElementById(`rep-ast-status-${i}`).innerText.trim();
+                        ast.owner = document.getElementById(`rep-ast-owner-${i}`).innerText.trim();
+                    });
+                    commitAssetState();
+                } else if (moduleKey === 'vault') {
+                    vaultData.forEach((v, i) => {
+                        v.name = document.getElementById(`rep-vlt-name-${i}`).innerText.trim();
+                        v.format = document.getElementById(`rep-vlt-format-${i}`).innerText.trim();
+                        v.size = document.getElementById(`rep-vlt-size-${i}`).innerText.trim();
+                    });
+                    commitVaultState();
+                } else if (moduleKey === 'vehicles') {
+                    vehicleData.forEach((v, i) => {
+                        v.model = document.getElementById(`rep-veh-model-${i}`).innerText.trim();
+                        v.driver = document.getElementById(`rep-veh-driver-${i}`).innerText.trim();
+                        v.status = document.getElementById(`rep-veh-status-${i}`).innerText.trim();
+                    });
+                    commitVehicleState();
+                } else if (moduleKey === 'gallery') {
+                    galleryData.forEach((g, i) => {
+                        g.name = document.getElementById(`rep-gal-name-${i}`).innerText.trim();
+                    });
+                    commitGalleryState();
+                }
+                showToast(`Section edits for [${moduleKey.toUpperCase()}] committed into permanent memory.`);
+            } catch (err) {
+                showToast("Error processing structural change overrides.");
+            }
+        }
+
+        // --- 1. INTERACTIVE DASHBOARD COMPONENT ---
+        function renderDashboard() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-chart-pie me-2 text-success"></i>Interactive Operations Dashboard</h3>
+                            <p class="text-muted m-0 small">Dashboard updates dynamically. Use relevant tabs to add or alter data points.</p>
+                        </div>
+                        <button class="btn btn-warning btn-sm font-weight-bold" onclick="saveDashboardStats()"><i class="fa-solid fa-floppy-disk me-1"></i> Save Manual Override</button>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-primary">
+                            <i class="fa-solid fa-users-gear fa-2x text-primary mb-2"></i>
+                            <h6 class="text-muted small">Total Registered Staff</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-staff" contenteditable="true" style="font-size: 2rem;">${dashboardStats.staffCount}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0 text-decoration-none" onclick="deleteStat('staffCount')"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-success">
+                            <i class="fa-solid fa-wallet fa-2x text-success mb-2"></i>
+                            <h6 class="text-muted small">Financial Ledgers Locked</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-ledger" contenteditable="true" style="font-size: 2rem;">${dashboardStats.ledgerRecords}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0 text-decoration-none" onclick="deleteStat('ledgerRecords')"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-warning">
+                            <i class="fa-solid fa-laptop-file fa-2x text-warning mb-2"></i>
+                            <h6 class="text-muted small">Active Project Portfolios</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-programs" contenteditable="true" style="font-size: 2rem;">${dashboardStats.activePrograms}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0 text-decoration-none" onclick="deleteStat('activePrograms')"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <div class="card kpi-card p-3 text-center border-bottom border-4 border-danger">
+                            <i class="fa-solid fa-vault fa-2x text-danger mb-2"></i>
+                            <h6 class="text-muted small">Archived Vault Docs</h6>
+                            <h3 class="fw-extrabold editable-cell" id="db-vault" contenteditable="true" style="font-size: 2rem;">${dashboardStats.vaultDocs}</h3>
+                            <button class="btn btn-link btn-xs text-danger p-0 text-decoration-none" onclick="deleteStat('vaultDocs')"><i class="fa-solid fa-trash-can small"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="card border-0 shadow-sm p-4 bg-white">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-bolt text-warning me-2"></i>Quick Administrative Access</h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button class="btn btn-warning btn-sm text-dark fw-bold" onclick="switchTab('team')">View Dedicated Team Cards</button>
+                                <button class="btn btn-outline-success btn-sm" onclick="switchTab('reports')">Open Real-Time Master Reports</button>
+                                <button class="btn btn-outline-dark btn-sm" onclick="switchTab('hr')">View Full HR Directory</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveDashboardStats() {
+            dashboardStats.staffCount = parseInt(document.getElementById("db-staff").innerText) || 0;
+            dashboardStats.ledgerRecords = parseInt(document.getElementById("db-ledger").innerText) || 0;
+            dashboardStats.activePrograms = parseInt(document.getElementById("db-programs").innerText) || 0;
+            dashboardStats.vaultDocs = parseInt(document.getElementById("db-vault").innerText) || 0;
+            commitDashboardState();
+            showToast("Dashboard KPIs updated permanently.");
+        }
+
+        function deleteStat(key) {
+            dashboardStats[key] = 0;
+            commitDashboardState();
+            renderDashboard();
+            showToast(`Metric cleared.`);
+        }
+
+        // --- 2. HUMAN RESOURCES ---
+        function renderHR() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-users-gear me-2 text-success"></i>Staff & Human Resource Directories</h3>
+                        <p class="text-muted m-0 small">In-line editable values. Hit Save to store modifications.</p>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="addNewStaff()"><i class="fa-solid fa-plus me-1"></i> Enroll Employee</button>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr><th>ID Card</th><th>Employee Name</th><th>Role</th><th>Section</th><th>Status</th><th>Control Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${hrData.map((emp, index) => `
+                                    <tr>
+                                        <td><strong>${emp.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-name-${index}">${emp.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-role-${index}">${emp.role}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-dept-${index}">${emp.dept}</td>
+                                        <td contenteditable="true" class="editable-cell" id="hr-status-${index}">${emp.status}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" onclick="saveHRRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteHRRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addNewStaff() {
+            const num = hrData.length + 1;
+            hrData.push({ id: `EMP-0${num}`, name: "New Associate", role: "Unassigned", dept: "Unassigned", status: "Active" });
+            commitHRState();
+            renderHR();
+            showToast("Employee record created.");
+        }
+
+        function saveHRRow(index) {
+            hrData[index].name = document.getElementById(`hr-name-${index}`).innerText.trim();
+            hrData[index].role = document.getElementById(`hr-role-${index}`).innerText.trim();
+            hrData[index].dept = document.getElementById(`hr-dept-${index}`).innerText.trim();
+            hrData[index].status = document.getElementById(`hr-status-${index}`).innerText.trim();
+            commitHRState();
+            showToast("Employee details committed.");
+        }
+
+        function deleteHRRow(index) {
+            if(confirm("Delete this staff profile?")) {
+                hrData.splice(index, 1);
+                commitHRState();
+                renderHR();
+                showToast("Staff profile purged.");
+            }
+        }
+
+        // --- 3. PROGRAMS & INTEGRATED MONITORING & EVALUATION ---
+        function renderPrograms() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                        <div>
+                            <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-laptop-file me-2 text-success"></i>Programs & M&E Framework</h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button class="btn btn-success btn-sm" onclick="addNewProgram()"><i class="fa-solid fa-plus me-1"></i> Add Project Row</button>
+                        <button class="btn btn-success btn-sm fw-bold border-2 border-dark" style="color:#fff; background-color:#1B5E20;" onclick="addNewMEColumn()"><i class="fa-solid fa-circle-plus me-1"></i> ADD M&E COLUMN</button>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table" id="me-dynamic-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref ID</th><th>Program Title</th><th>Director</th><th>Completion</th><th>Key KPI</th><th>Target</th>
+                                    ${customMEColumns.map((col, cIdx) => `<th>${col} <button class="btn btn-link text-white p-0 btn-xs text-decoration-none" onclick="deleteMEColumn(${cIdx})"><i class="fa-solid fa-xmark"></i></button></th>`).join('')}
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${programsData.map((p, index) => `
+                                    <tr>
+                                        <td><strong>${p.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-title-${index}">${p.title}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-head-${index}">${p.head}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-progress-${index}">${p.progress}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-kpi-${index}">${p.kpi}</td>
+                                        <td contenteditable="true" class="editable-cell" id="prog-target-${index}">${p.target}</td>
+                                        ${customMEColumns.map((col, cIdx) => `<td contenteditable="true" class="editable-cell" id="prog-custom-${index}-${cIdx}">${p['custom_' + cIdx] || '-'}</td>`).join('')}
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" onclick="saveProgramRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteProgramRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addNewProgram() {
+            programsData.push({ id: `PRG-${Math.floor(200+Math.random()*100)}`, title: "New Initiative Project", head: "Officer Assg.", progress: "0%", kpi: "System indicator", target: "100%" });
+            commitProgramsState();
+            renderPrograms();
+            showToast("Evaluation schema row created.");
+        }
+
+        function addNewMEColumn() {
+            const label = prompt("Enter standard text header name for custom evaluation column:");
+            if(label && label.trim() !== "") {
+                customMEColumns.push(label.trim());
+                commitProgramsState();
+                renderPrograms();
+                showToast(`Dynamic criteria [${label}] attached.`);
+            }
+        }
+
+        function deleteMEColumn(index) {
+            if(confirm("Drop this custom column completely?")) {
+                customMEColumns.splice(index, 1);
+                commitProgramsState();
+                renderPrograms();
+                showToast("Column dropped.");
+            }
+        }
+
+        function saveProgramRow(index) {
+            programsData[index].title = document.getElementById(`prog-title-${index}`).innerText.trim();
+            programsData[index].head = document.getElementById(`prog-head-${index}`).innerText.trim();
+            programsData[index].progress = document.getElementById(`prog-progress-${index}`).innerText.trim();
+            programsData[index].kpi = document.getElementById(`prog-kpi-${index}`).innerText.trim();
+            programsData[index].target = document.getElementById(`prog-target-${index}`).innerText.trim();
+            
+            customMEColumns.forEach((col, cIdx) => {
+                const cell = document.getElementById(`prog-custom-${index}-${cIdx}`);
+                if(cell) programsData[index]['custom_' + cIdx] = cell.innerText.trim();
+            });
+            commitProgramsState();
+            showToast("Program matrix saved successfully.");
+        }
+
+        function deleteProgramRow(index) {
+            if(confirm("Delete this portfolio layout row?")) {
+                programsData.splice(index, 1);
+                commitProgramsState();
+                renderPrograms();
+                showToast("Portfolio row removed.");
+            }
+        }
+
+        // --- 4. FINANCIAL LEDGER ---
+        function renderLedger() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-file-invoice-dollar me-2 text-success"></i>Financial Ledger Records</h3>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="addNewLedger()"><i class="fa-solid fa-plus me-1"></i> Add New Record</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr><th>Transaction Ref</th><th>Particulars</th><th>Type</th><th>Settle Value</th><th>Verification State</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${ledgerData.map((item, index) => `
+                                    <tr>
+                                        <td><strong>${item.ref}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="led-desc-${index}">${item.desc}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-type-${index}">${item.type}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-amount-${index}">${item.amount}</td>
+                                        <td contenteditable="true" class="editable-cell" id="led-status-${index}">${item.status}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" onclick="saveLedgerRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteLedgerRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addNewLedger() {
+            ledgerData.push({ ref: `TX-${Math.floor(9000+Math.random()*900)}`, desc: "System Operation Log", type: "Expense", amount: "$0.00", status: "Pending" });
+            commitLedgerState();
+            renderLedger();
+            showToast("Financial record initialized.");
+        }
+
+        function saveLedgerRow(index) {
+            ledgerData[index].desc = document.getElementById(`led-desc-${index}`).innerText.trim();
+            ledgerData[index].type = document.getElementById(`led-type-${index}`).innerText.trim();
+            ledgerData[index].amount = document.getElementById(`led-amount-${index}`).innerText.trim();
+            ledgerData[index].status = document.getElementById(`led-status-${index}`).innerText.trim();
+            commitLedgerState();
+            showToast("Transaction statement committed.");
+        }
+
+        function deleteLedgerRow(index) {
+            if(confirm("Purge ledger item line?")) {
+                ledgerData.splice(index, 1);
+                commitLedgerState();
+                renderLedger();
+                showToast("Ledger statement deleted.");
+            }
+        }
+
+        // --- 5. INVENTORY & ASSET MANAGEMENT ---
+        function renderAssets() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-boxes-stacked me-2 text-success"></i>Inventory and Asset Management</h3>
+                    </div>
+                    <button class="btn btn-success btn-sm" onclick="addNewAsset()"><i class="fa-solid fa-plus me-1"></i> Record Asset</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr><th>Asset ID</th><th>Asset Name</th><th>Storage Location</th><th>Circulation Status</th><th>Primary Holder</th><th>Control Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${assetData.map((item, index) => `
+                                    <tr>
+                                        <td><strong>#${item.id}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-name-${index}">${item.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-loc-${index}">${item.location}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-status-${index}">${item.status}</td>
+                                        <td contenteditable="true" class="editable-cell" id="ast-owner-${index}">${item.owner}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" onclick="saveAssetRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteAssetRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addNewAsset() {
+            const nextId = assetData.length > 0 ? Math.max(...assetData.map(a=>a.id)) + 1 : 101;
+            assetData.push({ id: nextId, name: "New Equipment Stock", location: "Warehouse Storage", status: "Available", owner: "Supply Desk" });
+            commitAssetState();
+            renderAssets();
+            showToast("Asset stock registered.");
+        }
+
+        function saveAssetRow(index) {
+            assetData[index].name = document.getElementById(`ast-name-${index}`).innerText.trim();
+            assetData[index].location = document.getElementById(`ast-loc-${index}`).innerText.trim();
+            assetData[index].status = document.getElementById(`ast-status-${index}`).innerText.trim();
+            assetData[index].owner = document.getElementById(`ast-owner-${index}`).innerText.trim();
+            commitAssetState();
+            showToast("Asset information saved.");
+        }
+
+        function deleteAssetRow(index) {
+            if(confirm("Wipe this asset allocation line item?")) {
+                assetData.splice(index, 1);
+                commitAssetState();
+                renderAssets();
+                showToast("Asset allocation removed.");
+            }
+        }
+
+        // --- 6. DOCUMENT VAULT ---
+        function renderVault() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-vault me-2 text-success"></i>Internal Document Vault</h3>
+                    <div class="mt-3">
+                        <label class="btn btn-success btn-sm mb-0">
+                            <i class="fa-solid fa-file-arrow-up me-1"></i> Register & Upload Document
+                            <input type="file" id="vault-file-uploader" style="display:none;" onchange="uploadDocumentToVault(this)">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr><th>Document Key</th><th>Filename Handle</th><th>Document Format</th><th>Storage Allocation</th><th>Actions & Downloads</th></tr>
+                            </thead>
+                            <tbody>
+                                ${vaultData.map((doc, index) => `
+                                    <tr>
+                                        <td><strong>${doc.docId}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-name-${index}">${doc.name}</td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-format-${index}">${doc.format}</td>
+                                        <td contenteditable="true" class="editable-cell" id="vlt-size-${index}">${doc.size}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" title="Save Edits" onclick="saveVaultRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-success" title="Download File Copy" onclick="downloadVaultFile(${index})"><i class="fa-solid fa-download"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteVaultRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function uploadDocumentToVault(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const format = file.name.split('.').pop().toUpperCase();
+                const size = (file.size / (1024 * 1024)).toFixed(2) + " MB";
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    vaultData.push({
+                        docId: `DOC-${Math.floor(100+Math.random()*900)}`,
+                        name: file.name.substring(0, file.name.lastIndexOf('.')),
+                        format: format, size: size, content: e.target.result
+                    });
+                    commitVaultState();
+                    renderVault();
+                    showToast("Document saved into permanent memory.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadVaultFile(index) {
+            const doc = vaultData[index];
+            if(!doc.content) { showToast("Error: Missing file source structure."); return; }
+            const link = document.createElement('a');
+            link.href = doc.content;
+            link.download = `${doc.name}.${doc.format.toLowerCase()}`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+
+        function saveVaultRow(index) {
+            vaultData[index].name = document.getElementById(`vlt-name-${index}`).innerText.trim();
+            vaultData[index].format = document.getElementById(`vlt-format-${index}`).innerText.trim();
+            vaultData[index].size = document.getElementById(`vlt-size-${index}`).innerText.trim();
+            commitVaultState();
+            showToast("Document descriptors locked down.");
+        }
+
+        function deleteVaultRow(index) {
+            if(confirm("Permanently wipe document from local storage core?")) {
+                vaultData.splice(index, 1);
+                commitVaultState();
+                renderVault();
+                showToast("Document deleted.");
+            }
+        }
+
+        // --- 7. FLEET & VEHICLE SHEETS ---
+        function renderVehicles() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-warning d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-car-side me-2 text-warning"></i>Active Fleet & Vehicle Registry</h3>
+                    </div>
+                    <button class="btn btn-warning btn-sm" onclick="addNewVehicle()"><i class="fa-solid fa-plus me-1"></i> Register Vehicle</button>
+                </div>
+                <div class="card border-0 shadow-sm bg-white p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle dynamic-table">
+                            <thead>
+                                <tr><th>Plate ID</th><th>Vehicle Model</th><th>Assigned Operator</th><th>Deployment Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody>
+                                ${vehicleData.map((v, index) => `
+                                    <tr>
+                                        <td><strong>${v.plate}</strong></td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-model-${index}">${v.model}</td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-driver-${index}">${v.driver}</td>
+                                        <td contenteditable="true" class="editable-cell" id="veh-status-${index}">${v.status}</td>
+                                        <td>
+                                            <div class="d-flex gap-1">
+                                                <button class="btn btn-sm btn-outline-success" onclick="saveVehicleRow(${index})"><i class="fa-solid fa-floppy-disk"></i></button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="deleteVehicleRow(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addNewVehicle() {
+            vehicleData.push({ plate: "EARN-" + Math.floor(100 + Math.random() * 900), model: "Sedan Chassis", driver: "Awaiting Assignment", status: "Idle" });
+            commitVehicleState();
+            renderVehicles();
+            showToast("New machine initialized in registry logs.");
+        }
+
+        function saveVehicleRow(index) {
+            vehicleData[index].model = document.getElementById(`veh-model-${index}`).innerText.trim();
+            vehicleData[index].driver = document.getElementById(`veh-driver-${index}`).innerText.trim();
+            vehicleData[index].status = document.getElementById(`veh-status-${index}`).innerText.trim();
+            commitVehicleState();
+            showToast("Vehicle statistics updated.");
+        }
+
+        function deleteVehicleRow(index) {
+            if(confirm("Remove machine from fleet registry logs?")) {
+                vehicleData.splice(index, 1);
+                commitVehicleState();
+                renderVehicles();
+                showToast("Machine parsed out completely.");
+            }
+        }
+
+        // --- 8. MEDIA GALLERY ---
+        function renderGallery() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-images me-2 text-success"></i>Core Media Gallery</h3>
+                    <div class="mt-3">
+                        <label class="btn btn-success btn-sm mb-0">
+                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Upload Media Asset File
+                            <input type="file" id="gallery-file-uploader" accept="image/*,video/*" style="display:none;" onchange="uploadMediaAsset(this)">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="gallery-container">
+                    ${galleryData.map((media, index) => `
+                        <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <div class="card gallery-card bg-white border-0 h-100 d-flex flex-column justify-content-between">
+                                <div class="gallery-preview">
+                                    ${media.type === 'image' ? `<img src="${media.src}" alt="${media.name}" class="w-100 h-100" style="object-fit:cover;">` : `<video src="${media.src}" controls class="w-100 h-100" style="object-fit:cover;"></video>`}
+                                </div>
+                                <div class="p-3">
+                                    <h6 class="text-truncate fw-bold mb-1" title="${media.name}">${media.name}</h6>
+                                    <span class="badge bg-dark text-white small mb-3">${media.type.toUpperCase()}</span>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success flex-grow-1" onclick="downloadMediaAssetItem(${index})"><i class="fa-solid fa-download me-1"></i> Save File</button>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="deleteMedia(${index})"><i class="fa-solid fa-trash-can"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function uploadMediaAsset(input) {
+            if(input.files && input.files[0]) {
+                const file = input.files[0];
+                const type = file.type.startsWith('video') ? 'video' : 'image';
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    galleryData.push({ id: Date.now(), name: file.name, type: type, src: e.target.result });
+                    commitGalleryState();
+                    renderGallery();
+                    showToast("Resource added to cloud arrays.");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function downloadMediaAssetItem(index) {
+            const media = galleryData[index];
+            const downloaderLink = document.createElement('a');
+            downloaderLink.href = media.src;
+            downloaderLink.download = media.name || `downloaded_asset_${media.id}`;
+            document.body.appendChild(downloaderLink);
+            downloaderLink.click();
+            downloaderLink.remove();
+        }
+
+        function deleteMedia(index) {
+            if(confirm("Purge resource object?")) {
+                galleryData.splice(index, 1);
+                commitGalleryState();
+                renderGallery();
+                showToast("Resource purged.");
+            }
+        }
+
+        // --- 9. MEMBER REGISTRATION ---
+        function renderContactForm() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success">
+                    <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-address-book me-2 text-success"></i>Internal Member Registration</h3>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-4 mx-auto mb-4" style="max-width: 650px;">
+                    <form id="eivoms-contact-form" onsubmit="submitContactForm(event)">
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">First Name</label>
+                                <input type="text" class="form-control" id="form-first-name" placeholder="John" required>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label class="form-label small fw-bold text-secondary">Last Name</label>
+                                <input type="text" class="form-control" id="form-last-name" placeholder="Doe" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Email Address</label>
+                            <input type="email" class="form-control" id="form-email" placeholder="johndoe@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Contact Number</label>
+                            <input type="tel" class="form-control" id="form-phone" placeholder="+1 (555) 000-0000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">Primary Address</label>
+                            <textarea class="form-control" id="form-address" rows="3" placeholder="123 Academic Way" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-secondary">Gender</label>
+                            <select class="form-select" id="form-gender" required>
+                                <option value="" disabled selected>Identify Gender Profile</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Non-Binary">Non-Binary</option>
+                                <option value="Prefer Not To Say">Prefer Not To Say</option>
+                            </select>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-outline-success px-5 py-3 fw-bolder border-2" style="font-weight: 800; color: #1B5E20; text-transform: uppercase; border-color: #1B5E20; background: #ffffff;">
+                                Submit Registration File <i class="fa-solid fa-paper-plane ms-2"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card border-0 shadow-sm bg-white p-4 mx-auto" style="max-width: 650px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0 text-dark">Local Submission Workspace</h5>
+                        <button class="btn btn-sm btn-dark" onclick="exportSubmissionsToExcel()"><i class="fa-solid fa-download me-1"></i> Excel Export</button>
+                    </div>
+                    <div class="table-responsive" style="max-height: 200px;">
+                        <table class="table table-sm table-striped">
+                            <thead><tr><th>Name</th><th>Email</th><th>Gender</th></tr></thead>
+                            <tbody id="quick-submission-tbody">
+                                ${submissionHistory.length === 0 ? `<tr><td colspan="3" class="text-center text-muted small">No entries yet inside storage registers.</td></tr>` : 
+                                  submissionHistory.map(s => `<tr><td>${s.name}</td><td>${s.email}</td><td>${s.gender}</td></tr>`).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function submitContactForm(event) {
+            event.preventDefault();
+            const first = document.getElementById("form-first-name").value;
+            const last = document.getElementById("form-last-name").value;
+            const email = document.getElementById("form-email").value;
+            const phone = document.getElementById("form-phone").value;
+            const gender = document.getElementById("form-gender").value;
+
+            submissionHistory.push({ name: `${first} ${last}`, email, phone, gender });
+            commitSubmissionsState();
+            addSystemNotification("Member Directory", `Registered delegate: ${first} ${last}`);
+            showToast("Preserved safely inside persistent registry databases.");
+            renderContactForm();
+        }
+
+        // --- 10. SYSTEM ADMINISTRATION PANEL ---
+        function renderAdminPanel() {
+            document.getElementById("dynamic-module-view").innerHTML = `
+                <div class="p-4 bg-white rounded-3 shadow-sm mb-4 border-start border-4 border-success d-flex flex-wrap align-items-center justify-content-between gap-2">
+                    <div>
+                        <h3 class="fw-bold text-dark m-0"><i class="fa-solid fa-gears me-2 text-success"></i>System Administration Core</h3>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-database text-success me-2"></i>Database Maintenance</h5>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button class="btn btn-outline-success" onclick="triggerDatabaseBackup()"><i class="fa-solid fa-file-export me-1"></i> Download JSON Backup</button>
+                                <button class="btn btn-danger" onclick="resetSystem()"><i class="fa-solid fa-trash-arrow-up me-1"></i> Reset Local Data</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <div class="card border-0 shadow-sm p-4 bg-white h-100">
+                            <h5 class="fw-bold text-dark mb-3"><i class="fa-solid fa-sliders text-warning me-2"></i>Environment Profiles</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Authorized Institution</label>
+                                <input type="text" class="form-control" value="${sys.orgName}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function triggerDatabaseBackup() {
+            const packageData = { dashboard: dashboardStats, team: teamData, hr: hrData, programs: programsData, ledger: ledgerData, assets: assetData, vault: vaultData, vehicles: vehicleData, gallery: galleryData, submissions: submissionHistory, timestamp: new Date().toISOString() };
+            const fileString = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(packageData, null, 4));
+            const downloader = document.createElement('a');
+            downloader.setAttribute("href", fileString);
+            downloader.setAttribute("download", "EIVOMS_Master_Store_Backup.json");
+            document.body.appendChild(downloader);
+            downloader.click();
+            downloader.remove();
+            showToast("Database storage array configuration extracted safely.");
+        }
+
+        function resetSystem() {
+            if(confirm("Wiping local database registries will completely flush system profiles. Proceed?")) {
+                try { localStorage.clear(); } catch(e) {}
+                window.location.reload();
+            }
+        }
+
+        // --- GLOBAL NOTIFICATIONS PANEL ---
+        const systemNotifications = [
+            { system: "System Core", details: "EIVOMS live monitoring architecture online.", time: "Just Now" }
+        ];
+
+        function addSystemNotification(system, details) {
+            systemNotifications.unshift({ system, details, time: "Just Now" });
+            updateNotificationUI();
+        }
+
+        function updateNotificationUI() {
+            const listEl = document.getElementById("notification-dropdown");
+            const badgeEl = document.getElementById("notification-count");
+            if (!badgeEl || !listEl) return;
+            badgeEl.innerText = systemNotifications.length;
+            listEl.innerHTML = `
+                <h6 class="fw-bold border-bottom pb-2 text-dark">Recent Core Notifications</h6>
+                <div style="max-height: 250px; overflow-y: auto;">
+                    ${systemNotifications.map(n => `
+                        <div class="p-2 border-bottom hover-bg-light rounded small mb-1">
+                            <div class="d-flex justify-content-between">
+                                <strong class="text-success">${n.system}</strong>
+                                <span class="text-xs text-muted" style="font-size: 10px;">${n.time}</span>
+                            </div>
+                            <p class="text-muted m-0" style="font-size: 11px;">${n.details}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        document.getElementById("login-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            Session.login();
+        });
+
+        function performLogout() {
+            if (confirm("Close securely logged session?")) { Session.logout(); }
+        }
+
+        function runTimestampService() {
+            setInterval(() => {
+                const clockEl = document.getElementById("live-timestamp");
+                if (clockEl) { clockEl.innerText = new Date().toLocaleString(); }
+            }, 1000);
+        }
+
+        function showToast(msg) {
+            const toastEl = document.getElementById('appToast');
+            if (!toastEl) return;
+            document.getElementById('toast-message').textContent = msg;
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+
+        function extractTableData(tableId = "report-table-hr") {
+            const table = document.getElementById(tableId);
+            const structuralData = [];
+            if (!table) return [["No active data layout table found."]];
+            for (let row of table.rows) {
+                const rowContent = [];
+                for (let cell of row.cells) { rowContent.push(cell.innerText.trim()); }
+                structuralData.push(rowContent);
+            }
+            return structuralData;
+        }
+
+        function exportToCSV() {
+            const dataMatrix = extractTableData("report-table-hr");
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + dataMatrix.map(row => row.map(val => `"${val.replace(/"/g, '""')}"`).join(",")).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const downloadAnchor = document.createElement("a");
+            downloadAnchor.setAttribute("href", encodedUri);
+            downloadAnchor.setAttribute("download", `EIVOMS_Report_${Date.now()}.csv`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            showToast("CSV report generated and dispatched.");
+        }
+
+        function exportToPDF() { window.print(); }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            loadSavedStateData();
+            runTimestampService();
+            updateNotificationUI();
+            initializeLoginUI(); 
+            Session.checkAuth();
+            triggerLoader(600);
+        });
+    </script>
+</body>
+</html>
